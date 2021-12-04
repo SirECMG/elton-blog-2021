@@ -81,7 +81,7 @@ For time, I've been getting less sleepy. This results in higher energy levels in
 
 ## Do the first thing that pops in your mind
 
-## what I noticed my habits
+## what I noticed about my habits
 For this, I notice that I would thing of an idea in my head that I'd either want to do and not write it down. Next that thought that I had, resulted in miss opportunities. So a lesson learned from my last Team Lead Alula, was to either write it down immediately or do the item first in your head before you forget!
 
 ![light bulb idea](../assets/light_bulb.jpg)
