@@ -54,7 +54,7 @@ I use this feature to assign tasks between my personal and work. It can also be 
 
 ## Microsoft Outlook Calendar
 
-![Microsoft Outlook Logo](/assets/outlook_logo.PNG)
+![Microsoft Outlook Logo](/assets/outlook_logo.png)
 
 More and more I've been using Microsoft Outlook to manage my future calendar. Using a calendar gives me a heads up on all the tasks head.
 
