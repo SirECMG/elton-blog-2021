@@ -11,7 +11,7 @@ In this post I am going to discuss some tips that has helped me become a product
 
 ## Microsoft Todo App
 
-![Microsoft Todo](../assets/todo_logo.jpg)
+![Microsoft Todo](/assets/todo_logo.jpg)
 
 Ideally, pen and paper was my goto way of getting things done on a regular basis. I actually prefer this way as the act of writing things down allows my brain to register all tasks I need to do in the short and long term. It allows me to focus.
 
@@ -24,10 +24,10 @@ One reason why I like to use this application is because the application from a 
 It also integrates with Outlook in a way that's a game changer in my opinion.
 
 desktop version of Microsoft Todo
-![Microsoft Todo](../assets/microsoft_todo.png)
+![Microsoft Todo](/assets/microsoft_todo.png)
 
 selected todo item
-![Microsoft Todo](../assets/microsoft_todo2.png)
+![Microsoft Todo](/assets/microsoft_todo2.png)
 
 ## how do I organize my tasks
 I organize my Todo list into two buckets. Work and Personal. I used to used one, but definitely it is not scaling as I need more things to do. 
@@ -54,14 +54,14 @@ I use this feature to assign tasks between my personal and work. It can also be 
 
 ## Microsoft Outlook Calendar
 
-![Microsoft Outlook Logo](../assets/outlook_logo.PNG)
+![Microsoft Outlook Logo](/assets/outlook_logo.PNG)
 
 More and more I've been using Microsoft Outlook to manage my future calendar. Using a calendar gives me a heads up on all the tasks head.
 
 ## outlook app integrates with todo on week view
 The benefits of using Outlook is that the week view calendar allows you to see what tasks are on your Todo app if you assign them a due date.
 
-![Microsoft Outlook](../assets/microsoft_outlook.png)
+![Microsoft Outlook](/assets/microsoft_outlook.png)
 
 Outlook also provides regular email and a great filtering mechanisms.
 
@@ -73,7 +73,7 @@ As I got older, I noticed that more and more that if I ate a large lunch I would
 
 To counter this, I began eating less rice. White rice was something I ate in large amounts for lunch and dinner and lately, I have completely removed it from my diet. Or at least eating very minimal. My goal is to eat way more nutricious foods, rather than comfort food. It is important to regulate energy levels.
 
-![White rice](../assets/white_rice.jpg)
+![White rice](/assets/white_rice.jpg)
 
 ## how I felt after it a couple weeks in
 
@@ -84,7 +84,7 @@ For time, I've been getting less sleepy. This results in higher energy levels in
 ## what I noticed about my habits
 For this, I notice that I would thing of an idea in my head that I'd either want to do and not write it down. Next that thought that I had, resulted in miss opportunities. So a lesson learned from my last Team Lead Alula, was to either write it down immediately or do the item first in your head before you forget!
 
-![light bulb idea](../assets/light_bulb.jpg)
+![light bulb idea](/assets/light_bulb.jpg)
 
 ## Switch between 2-3 tasks
 
@@ -96,7 +96,7 @@ From my experience, the longer you do the same thing over and over again the mor
 ## how I manage my energy using pomodoros
 In order to keep your energy levels, you need work in burst of energies. We have seen pomodoros being used over and over again in articles. But if you actually use it in practice it helps so much. What I personally do is I devote 25 minutes of heads down working time, but I use 10-15 minute breaks in between to stay grounded and not get lost in tangent. This gradular approach has given me enough energy to push through for task I don't really want to do. The important thing to do is to stick with it and push through. Completely focus at the current task at hand.
 
-![pomodoro_timer](../assets/pomodoro_timer.jpg)
+![pomodoro_timer](/assets/pomodoro_timer.jpg)
 
 ## does pomodoro work?
 
@@ -110,13 +110,13 @@ Having a higher level view of what is going on can be great for productivity. Bu
 
 If you do this you can have a lot of benefits. Maybe every top of the hour can you clear out notifications.
 
-![notifications](../assets/notifications.png)
+![notifications](/assets/notifications.png)
 
 ## Accept the Identity of a Productive Person
 
 By self proclaiming yourself as a productive person brings accountablity into play. Also, you need to convince yourself you are productive to build that character. Having confidence in yourself that you are productive also helps! Any approach helps, fake it 'til you make it! But be relentless in identifying yourself without a doubt that you are productive.
 
-![productivity](../assets/productivity.jpg)
+![productivity](/assets/productivity.jpg)
 
 ## Windows vs Mac Productivity
 
@@ -126,7 +126,7 @@ I am a developer by profession and have concluded in 2021 that Windows 10/11 is 
 
 Window management in Windows is way better than Mac. Windows organize better out of the box and it's just easier to create folders and navigate the file system. But I feel MacOS as a better terminal experience since it is Unix based, but as a developer you are able to accomplish just about the same tasks.
 
-![windows logo](../assets/windows_logo.jpg)
+![windows logo](/assets/windows_logo.jpg)
 
 As I mentioned before, Microsoft has the best products for productivity. They have mastered the art of productivity! Microsoft Todo, Outlook, Teams, Github are so good. They aren't the best but enough to get the job done.
 
@@ -138,7 +138,7 @@ The hardware argument between the two platforms is very minimal for me. The hard
 
 I am still figuring this one out. I will update this article when I finally have used both platforms.
 
-![andorid](../assets/android.jpg)
+![andorid](/assets/android.jpg)
 ## Have fun
 
 To close, life is way too short for you to do task too intensely, It is way more fun if you are enjoying every step of the way and not taking things too seriously.
@@ -147,5 +147,5 @@ The point I want to get across is that, you can still be intense and what not do
 
 Have fun with what you do and proceed with confidence! Be comfortable in uncomfortable situations.
 
-![fun](../assets/fun.jpg)
+![fun](/assets/fun.jpg)
 
