@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Productivity Tips"
-date:   2021-10-21 22:32:30 -0700
-categories: productivity
+title:  "Privacy Rights"
+date:   2021-10-27 22:32:30 -0700
+categories: random-thoughts
 ---
 
