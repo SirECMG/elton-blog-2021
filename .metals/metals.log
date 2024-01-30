@@ -1,0 +1,27 @@
+[0m2021.10.21 21:47:35 INFO  Started: Metals version 0.10.7 in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021' for client Visual Studio Code 1.61.2.[0m
+[0m2021.10.21 21:47:35 INFO  time: initialize in 0.44s[0m
+[0m2021.10.21 21:47:35 WARN  Build server is not auto-connectable.[0m
+[0m2021.10.21 21:47:35 WARN  no build tool detected in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.10.23 18:13:14 INFO  shutting down Metals[0m
+[0m2021.10.24 22:31:43 INFO  Started: Metals version 0.10.7 in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021' for client Visual Studio Code 1.61.2.[0m
+[0m2021.10.24 22:31:44 INFO  time: initialize in 0.69s[0m
+[0m2021.10.24 22:31:45 WARN  Build server is not auto-connectable.[0m
+[0m2021.10.24 22:31:45 WARN  no build tool detected in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.10.26 20:44:32 INFO  shutting down Metals[0m
+[0m2021.10.27 22:55:32 INFO  Started: Metals version 0.10.8 in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021' for client Visual Studio Code 1.61.2.[0m
+[0m2021.10.27 22:55:33 INFO  time: initialize in 0.93s[0m
+[0m2021.10.27 22:55:34 WARN  Build server is not auto-connectable.[0m
+[0m2021.10.27 22:55:34 WARN  no build tool detected in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.10.28 13:26:07 INFO  Started: Metals version 0.10.8 in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021' for client Visual Studio Code 1.61.2.[0m
+[0m2021.10.28 13:26:08 INFO  time: initialize in 0.87s[0m
+[0m2021.10.28 13:26:13 WARN  Build server is not auto-connectable.[0m
+[0m2021.10.28 13:26:13 WARN  no build tool detected in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.10.28 14:48:54 INFO  shutting down Metals[0m
+[0m2021.11.10 06:16:28 INFO  Started: Metals version 0.10.9 in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021' for client Visual Studio Code 1.61.2.[0m
+[0m2021.11.10 06:16:28 INFO  time: initialize in 0.84s[0m
+[0m2021.11.10 06:16:29 WARN  Build server is not auto-connectable.[0m
+[0m2021.11.10 06:16:29 WARN  no build tool detected in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.12.03 18:50:17 INFO  Started: Metals version 0.10.9 in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021' for client Visual Studio Code 1.62.3.[0m
+[0m2021.12.03 18:50:17 INFO  time: initialize in 0.53s[0m
+[0m2021.12.03 18:50:22 WARN  Build server is not auto-connectable.[0m
+[0m2021.12.03 18:50:22 WARN  no build tool detected in workspace 'C:\Users\Emuri\Documents\projects\elton-blog-2021'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m

@@ -9,25 +9,25 @@ categories: productivity
 
 In this post I am going to discuss some tips that has helped me become a productive person. These tips will include software and general advice.
 
+## Legal Pad
+What I learned from myself over the years is that the act of writing is a powerful force for productivity. The simple act of writing has been a tool to help me think clearly. In order to be productive, I create a todo list ideally the night before intended for the following day. But in reality, I typically create my list around 8am to 9am of the workday.
+
+![a picture of a memo pad](/assets/memo_pad.jpg)
+
+Having a piece of paper next to you while you work, acts a separate monitor or canvas to have your ideas. You are clearly able to see the current tasks and are able to take notes while conducting your work on the computer.
+
+
 ## Microsoft Todo App
+To keep track of long term goals, I use Microsoft Todo App across all my devices.
 
+Having pen and paper does not scale well for long term tasks because managing many pieces of paper is difficult. You can think of pen and paper as a short term buffer before moving it to long term storage (Microsoft Todo).
 ![Microsoft Todo](/assets/todo_logo.jpg)
-
-Ideally, pen and paper was my goto way of getting things done on a regular basis. I actually prefer this way as the act of writing things down allows my brain to register all tasks I need to do in the short and long term. It allows me to focus.
-
-The downside is that I need to physically carry a notebook everywhere and I am not able to conviently jot down all the things I want to get done.
-
-To solve this problem, I landed using Microsoft Todo after many different attempts on finding a good todo app. 
-
-One reason why I like to use this application is because the application from a ui and functionality aspect is very simple and powerful.
-
-It also integrates with Outlook in a way that's a game changer in my opinion.
-
-desktop version of Microsoft Todo
 ![Microsoft Todo](/assets/microsoft_todo.png)
-
-selected todo item
 ![Microsoft Todo](/assets/microsoft_todo2.png)
+
+This works well because the Microsoft Todo App has a reminder system. I can specify a reminder and due dates for my tasks. There is also space to write short notes and attachments.
+
+Notes here are also shareable! This means you are able to share tasks with other people by providing them a link to the list.
 
 ## how do I organize my tasks
 I organize my Todo list into two buckets. Work and Personal. I used to used one, but definitely it is not scaling as I need more things to do. 
@@ -37,20 +37,6 @@ The Work and Personal list act as backlogs. Then I use the "My Day" feature as m
 When creating a task todo, the idea is to keep the task as high level as possible and use the subtask for more detailed items. 
 
 If a task is too high level, I notice the work does not get done. The path to successful completion needs clarity.
-
-## commonly used features I use
-
-The common features I use to reenforce getting the work done is due dates and reminders. These are alerts to capture your attention. They tell you that something needs attention and does a good job of emphasizing and notifying you (from every device). The notifications Microsoft Todo alerts are annoying, and resisting the urge to ignore them is a personal challenge, but I am grateful this feature exist.
-
-## ability to see todo on any device
-Having constant visiblity on the backlog of tasks is important. One of the main reason why we are productive using a pen and notebook is that tasks are always visible. Leveraging technology makes it so that we can see information multiple screens. It is also, more "green" to compared to using paper.
-
-## ability to share lists
-
-Microsoft todo also allows other people to see your personal list by sharing it via a web link. This will give people the ability to view or edit the list. Which can be powerful as it can act as a project management tool. I use this to assign task from my work (Microsoft) and person account (live.com)
-
-## ability to assign list
-I use this feature to assign tasks between my personal and work. It can also be used like a project management feature giving it a team aspect.
 
 ## Microsoft Outlook Calendar
 
@@ -64,27 +50,6 @@ The benefits of using Outlook is that the week view calendar allows you to see w
 ![Microsoft Outlook](/assets/microsoft_outlook.png)
 
 Outlook also provides regular email and a great filtering mechanisms.
-
-## Light Lunches
-
-## how did I come about having lighter lunches?
-
-As I got older, I noticed that more and more that if I ate a large lunch I would get a food coma, sleep in the afternoon. It was almost inevitable.
-
-To counter this, I began eating less rice. White rice was something I ate in large amounts for lunch and dinner and lately, I have completely removed it from my diet. Or at least eating very minimal. My goal is to eat way more nutricious foods, rather than comfort food. It is important to regulate energy levels.
-
-![White rice](/assets/white_rice.jpg)
-
-## how I felt after it a couple weeks in
-
-For time, I've been getting less sleepy. This results in higher energy levels in the afternoons and also I've loss less weight. I am 6'3 and was 210 pounds in the height of the pandemic staying home. After, I've cut my weight by eliminating rice completely. Now I am down to a good 198-200 pounds.
-
-## Do the first thing that pops in your mind
-
-## what I noticed about my habits
-For this, I notice that I would thing of an idea in my head that I'd either want to do and not write it down. Next that thought that I had, resulted in miss opportunities. So a lesson learned from my last Team Lead Alula, was to either write it down immediately or do the item first in your head before you forget!
-
-![light bulb idea](/assets/light_bulb.jpg)
 
 ## Switch between 2-3 tasks
 
