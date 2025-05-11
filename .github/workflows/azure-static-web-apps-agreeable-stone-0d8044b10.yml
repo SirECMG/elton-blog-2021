@@ -18,6 +18,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
+          ruby-version: '3.3.8' # Use the version your project requires
+          bundler-cache: true # This will cache your bundle
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
