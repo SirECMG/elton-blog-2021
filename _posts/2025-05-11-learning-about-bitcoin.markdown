@@ -1,39 +1,38 @@
 ---
 layout: post
-title:  "Learning about bitcoin"
+title:  "How to Build Bitcoin Core"
 date:   2025-05-11 07:19:00 -0700
-categories: language
+categories: bitcoin
 ---
 
 # Getting Started First Steps
 
 ## Clone the Repo
 
-## Buy These Books
+bitcoin core (the reference implementation) has great [documentation](https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md) to build the project.
 
-### Mastering Bitcoin
+```
+git clone https://github.com/bitcoin/bitcoin.git
+```
 
-### Programming Bitcoin
+## Get the dependencies (Fedora)
+```
+sudo dnf install gcc-c++ cmake make python3
+sudo dnf install libevent-devel boost-devel
+sudo dnf install sqlite-devel
+sudo dnf install zeromq-devel
+sudo dnf install systemtap-sdt-devel
+sudo dnf install capnproto
+sudo dnf install qt6-qtbase-devel qt6-qttools-devel
+sudo dnf install qt6-qtwayland
+```
+## Build the Project
 
-### Mastering Lightning
+```
+cmake -B build
+cmake --build build    # use "-j N" for N parallel jobs
+cmake --install build  # optional
+```
 
+### [Reference Documentation](https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md)
 
-## Use these reference sites
-
-### [Learn Me a Bitcoin](https://learnmeabitcoin.com/)
-
-### [Michael Saylor Bitcoin For Developers Course](https://learn.saylor.org/course/view.php?id=500)
-
-## Topics to emphasize
-
-### Transactions
-
-### Blocks
-
-### Blockchain
-
-### Mining
-
-### Consensus
-
-### The Bitcoin Network
