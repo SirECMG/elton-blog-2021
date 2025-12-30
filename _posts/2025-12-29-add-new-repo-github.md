@@ -1,11 +1,10 @@
 ---
 layout: post
 title:  "Create Repo From Github Frontend"
+author: "Elton Murillo"
 date:   2025-12-29 04:04:00 -0700
 categories: git
 ---
-# Create Repo From Github Frontend
-
 1. Login into your github account then head to
     - [New Repository](https://github.com/new)
     - ![add new repo image](/assets/add-new-repo-github/image.png)
