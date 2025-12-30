@@ -27,10 +27,16 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: SirECMG
 github_username:  SirECMG
 
+remote_theme: jekyll/minima
+
 # Build settings
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-remote-theme
+
+minima:
+    skin: dark
 
 # Exclude from processing.
 # The following items will not be processed, by default.
