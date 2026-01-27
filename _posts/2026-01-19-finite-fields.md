@@ -19,6 +19,8 @@ Finite Fields are a set of numbers with finite size.
 
 F_n = p^n
 
+F_p = {0,1,..., p - 1}
+
 - where p is a prime number
 - n is a positive integer (extension degree)
     - The extension degree (n) determines how elements of the field are structured.
