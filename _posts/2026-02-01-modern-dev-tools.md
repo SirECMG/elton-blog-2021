@@ -24,8 +24,6 @@ I will provide a list of what I feel are the essential programs and also notable
 - tree
 
 ## Nice to Haves
-- plantuml
 - tree
 - delta (git diff)
-
 
