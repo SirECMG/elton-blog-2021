@@ -2,7 +2,7 @@
 layout: post
 title:  "git add patch"
 date:   2025-06-21 05:10:00 -0700
-tags: [git, tutorial]
+tags: [git]
 ---
 
 # git add --patch

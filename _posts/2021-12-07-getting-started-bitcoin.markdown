@@ -2,7 +2,7 @@
 layout: post
 title:  "Getting Started with Bitcoin Ecosystem"
 date:   2021-12-07 19:44:00 -0700
-tags: [bitcoin, economics]
+tags: [bitcoin]
 ---
 
 # Getting Started With Bitcoin

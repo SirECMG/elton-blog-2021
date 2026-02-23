@@ -1,5 +1,6 @@
 ---
   date: 2025-08-09
+  tags: [git]
 ---
 
 # How to ammend a commit
