@@ -2,7 +2,7 @@
 layout: post
 title:  "How to Build Bitcoin Core"
 date:   2025-05-11 07:19:00 -0700
-categories: bitcoin
+tags: [bitcoin]
 ---
 
 # Getting Started First Steps

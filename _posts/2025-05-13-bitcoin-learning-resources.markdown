@@ -2,7 +2,7 @@
 layout: post
 title:  "Bitcoin Learning Resources"
 date:   2025-05-13 08:01:00 -0700
-categories: bitcoin
+tags: [bitcoin]
 ---
 
 ## Buy These Books
