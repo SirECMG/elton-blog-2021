@@ -1,0 +1,15 @@
+<nav class="nav">
+  <ul class="nav-list">
+    <li class="nav-item">
+      <a href="/">Home</a>
+    </li>
+    <li class="nav-item">
+      <a href="/about">About</a>
+    </li>
+    {% if site.show_downloads %}
+    <li class="nav-item">
+      <a href="/feed.xml">RSS</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
