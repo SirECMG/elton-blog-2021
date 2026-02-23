@@ -9,7 +9,7 @@ categories: git
 # TDLR
 In the context of Bitcoin, Finite Fields are used in the area of public key derivation in conjunction with ellptic curves for the process of generating a public key given a private key, signing and verifying.
 
-Finite Fields are a class of numbers (similar to integers and real numbers) with defined arithmetic operations
+Finite Fields is a set of numbers (similar to integers and real numbers) with defined arithmetic operations
 and are used because the math operations ensure closed properties when performed. 
 
 Also, finite fields facilitate the math since each operation reduces to simple integer arithmetic modulo a prime.
@@ -17,7 +17,9 @@ Also, finite fields facilitate the math since each operation reduces to simple i
 # Definition of Finite Field
 Finite Fields are a set of numbers with finite size.
 
-F_n = p^n
+|F| = p^n (every finite field has a number of elements equal to a prime power.
+
+A finite field has order p^n and is denoted F_{p^n}
 
 F_p = {0,1,..., p - 1}
 
