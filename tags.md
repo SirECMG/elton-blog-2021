@@ -33,8 +33,9 @@ permalink: /tags/
 }
 
 .tags-page h2 {
-  border-bottom: 2px solid var(--border-color-01, #eee);
+  border-bottom: 2px solid;
   padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .tags-page .post-list {
@@ -44,22 +45,59 @@ permalink: /tags/
 
 .tags-page .post-list li {
   margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-left: 3px solid #007acc;
-  background-color: var(--background-color, #f9f9f9);
+  padding: 1rem;
+  border-left: 3px solid;
+  border-radius: 4px;
 }
 
 .tags-page .post-meta {
   font-size: 0.875rem;
-  color: var(--text-color-light, #666);
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
 }
 
 .tags-page .post-link {
   text-decoration: none;
-  color: var(--link-color, #007acc);
 }
 
 .tags-page .post-link:hover {
   text-decoration: underline;
+}
+
+.tags-page h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  .tags-page h2 {
+    border-bottom-color: #e1e4e8;
+  }
+  
+  .tags-page .post-list li {
+    background-color: #f6f8fa;
+    border-left-color: #0366d6;
+  }
+  
+  .tags-page .post-link {
+    color: #0366d6;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .tags-page h2 {
+    border-bottom-color: #30363d;
+  }
+  
+  .tags-page .post-list li {
+    background-color: #21262d;
+    border-left-color: #58a6ff;
+  }
+  
+  .tags-page .post-link {
+    color: #58a6ff;
+  }
 }
 </style>
