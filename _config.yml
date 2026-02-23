@@ -36,7 +36,6 @@ theme: minima
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
-  - jekyll-paginate
 
 # Tag settings
 tag_page_layout: tag_page
