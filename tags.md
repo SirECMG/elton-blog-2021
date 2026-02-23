@@ -33,8 +33,7 @@ permalink: /tags/
 }
 
 .tags-page h2 {
-  color: #333;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid var(--border-color-01, #eee);
   padding-bottom: 0.5rem;
 }
 
@@ -47,17 +46,17 @@ permalink: /tags/
   margin-bottom: 1rem;
   padding: 0.5rem;
   border-left: 3px solid #007acc;
-  background-color: #f9f9f9;
+  background-color: var(--background-color, #f9f9f9);
 }
 
 .tags-page .post-meta {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--text-color-light, #666);
 }
 
 .tags-page .post-link {
   text-decoration: none;
-  color: #007acc;
+  color: var(--link-color, #007acc);
 }
 
 .tags-page .post-link:hover {
