@@ -1,4 +1,6 @@
 ---
+  layout: post
+  title: "git commit --amend"
   date: 2025-08-09
   tags: [git]
 ---

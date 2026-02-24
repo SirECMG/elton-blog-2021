@@ -1,5 +1,9 @@
 ---
-date: 2025-06-14
+    layout: post
+    title: "Publish static website to azure"
+    author: "Elton Murillo"
+    date: 2026-02-23 10:04:00 +0800
+    tags: web
 ---
 
 # publish static website to azure
@@ -8,14 +12,14 @@ the following doc will show you how to configure and deploy your static blog to 
 
 # build static site generator
 ```
-mkdocs build
+bundler exec jekyll build
 ```
 
 # save output path for azure
-- after running `mkdocs build` it generates an output folder "site/".
+- after running `bundler exec jekyll build` it generates an output folder "site/".
 - you need to modify .github/workflows/azure-static-web-apps-[YOUR_APP_NAME].yml
 
-![image showing what to modify](./publish-static-site-azure/image.png)
+![image showing what to modify](/assets/publish-static-site-azure/image.png)
 
 # make custom domain changes in azure
 Follow the steps in the two sections below to configure and sync both cloud provider and dns provider domain configs.

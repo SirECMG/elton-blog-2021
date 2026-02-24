@@ -1,4 +1,6 @@
 ---
+    layout: post
+    title: "git squash"
     date: 2025-07-08
     tags: [git]
 ---
