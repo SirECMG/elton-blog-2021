@@ -4,6 +4,7 @@ title:  "Finite Fields"
 author: "Elton Murillo"
 date:   2026-01-19 10:14:00 +0800
 tags: [bitcoin, cryptography]
+---
 
 # TLDR
 Finite fields, also known as Galois fields, are number systems with a finite number of elements.
