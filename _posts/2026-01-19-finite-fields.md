@@ -3,7 +3,7 @@ layout: post
 title:  "Finite Fields"
 author: "Elton Murillo"
 date:   2026-01-19 10:14:00 +0800
-categories: git
+categories: [git, cryptography]
 ---
 
 # TLDR
