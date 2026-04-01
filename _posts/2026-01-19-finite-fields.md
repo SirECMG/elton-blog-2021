@@ -3,35 +3,28 @@ layout: post
 title:  "Finite Fields"
 author: "Elton Murillo"
 date:   2026-01-19 10:14:00 +0800
-categories: git
+tags: [bitcoin, cryptography]
 ---
 
-# TDLR
-In the context of Bitcoin, Finite Fields are used in the area of public key derivation in conjunction with ellptic curves for the process of generating a public key given a private key, signing and verifying.
+# TLDR
+Finite fields, also known as Galois fields, are number systems with a finite number of elements.
 
-Finite Fields is a set of numbers (similar to integers and real numbers) with defined arithmetic operations
-and are used because the math operations ensure closed properties when performed. 
+They support addition, subtraction, multiplication, and division, except that division by zero is not allowed. A key property of a finite field is closure: when you perform these operations on elements in the field, the result stays within the same field.
 
-Also, finite fields facilitate the math since each operation reduces to simple integer arithmetic modulo a prime.
+Finite fields usually have a size equal to a prime number or a power of a prime. One simple example is arithmetic modulo 7, where the only possible values are 0 through 6.
 
-# Definition of Finite Field
-Finite Fields are a set of numbers with finite size.
+Finite fields are important in cryptography because they provide a precise and predictable mathematical system that computers can handle efficiently. Their structure makes them especially useful for algorithms that need exact arithmetic rather than approximations.
 
-|F| = p^n (every finite field has a number of elements equal to a prime power.
+They form the mathematical foundation for elliptic curve cryptography, which is widely used in modern systems for public-key cryptography, digital signatures, and secure communication.
 
-A finite field has order p^n and is denoted F_{p^n}
+## Code Example
 
-F_p = {0,1,..., p - 1}
+```ruby
+class FiniteElement
+    def initialize(num, order)
+        @num = num
+        @order = order
+    end
+end
+```
 
-- where p is a prime number
-- n is a positive integer (extension degree)
-    - The extension degree (n) determines how elements of the field are structured.
-- The order (total number of elements) in the field
-
-
-# Formal Field Definition
-1. Addition & Multiplication: Commutative, associative, with identity elements (0 and 1)
-2. Subtraction & Division: Existence of additive and multiplicative inverses
-3. Distributive property: a × (b + c) = (a × b) + (a × c)
-
-Finite Fields can only exist of the size of the finite field is of a prime power (p^n). Where p is a prime number and n is the extension degree of the vector space its prime field. In bitcoin case it is 1 but in other ellptic curves it can be different.
