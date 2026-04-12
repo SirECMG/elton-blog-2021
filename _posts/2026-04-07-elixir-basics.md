@@ -5,7 +5,109 @@ date:   2026-04-09 07:29:00 -0700
 tags: [elixir]
 ---
 
-open file in elixir
+## table of contents
+
+- [Testing with ExUnit](#testing-with-exunit)
+- [test set up and config](#test-setup-and-config)
+- [open file](#open-file)
+- [tuples](#tuples)
+- [lists](#lists)
+- [maps](#maps)
+- [records](#records)
+- [struct](#struct)
+- [HTTP Client](#http-client)
+- [Test External Libraries](#test-external-libraries)
+
+## Testing with ExUnit
+
+[testing docs](https://hexdocs.pm/ex_unit/main/ExUnit.html)
+
+- mix will load all modules under lib/
+- mix will run all test under /test
+
+```elixir
+
+# File: assertion_test.exs
+
+# 1) Start ExUnit.
+ExUnit.start()
+
+# 2) Create a new test module and use "ExUnit.Case".
+defmodule AssertionTest do
+  # 3) Note that we pass "async: true", this runs the tests in the
+  #    test module concurrently with other test modules. The
+  #    individual tests within each test module are still run serially.
+  use ExUnit.Case, async: true
+
+  # 4) Use the "test" macro instead of "def" for clarity.
+  test "the truth" do
+    assert true
+  end
+end
+```
+### test setup and config
+
+[test set up](https://hexdocs.pm/ex_unit/main/ExUnit.Callbacks.html)
+
+
+```elixir
+defmodule AssertionTest do
+  use ExUnit.Case, async: true
+
+  # "setup_all" is called once per module before any test runs
+  setup_all do
+    IO.puts("Starting AssertionTest")
+
+    # Context is not updated here
+    :ok
+  end
+
+  # "setup" is called before each test
+  setup do
+    IO.puts("This is a setup callback for #{inspect(self())}")
+
+    on_exit(fn ->
+      IO.puts("This is invoked once the test is done. Process: #{inspect(self())}")
+    end)
+
+    # Returns extra metadata to be merged into context.
+    # Any of the following would also work:
+    #
+    #     {:ok, %{hello: "world"}}
+    #     {:ok, [hello: "world"]}
+    #     %{hello: "world"}
+    #
+    [hello: "world"]
+  end
+
+  # Same as above, but receives the context as argument
+  setup context do
+    IO.puts("Setting up: #{context.test}")
+
+    # We can simply return :ok when we don't want to add any extra metadata
+    :ok
+  end
+
+  # Setups can also invoke a local or imported function that returns a context
+  setup :invoke_local_or_imported_function
+
+  test "always pass" do
+    assert true
+  end
+
+  test "uses metadata from setup", context do
+    assert context[:hello] == "world"
+    assert context[:from_named_setup] == true
+  end
+
+  defp invoke_local_or_imported_function(context) do
+    [from_named_setup: true]
+  end
+end
+```
+
+## open file
+
 ```elixir
 file_name = "input.txt"
 case File.read(file_name) do
@@ -70,7 +172,7 @@ result = {:ok, atom, %{}}
 ```
 
 
-- con cells
+### con cells
 	- [head | tail]
 	- prepending is always faster
 	- appending is slower
@@ -190,9 +292,8 @@ end
 
 ## struct
 
-[struct doc](https://hexdocs.pm/elixir/1.12.3/Kernel.html#defstruct/1)
-[struct doc#2](https://hexdocs.pm/elixir/1.12.3/Kernel.SpecialForms.html#%25/2)
-Defines a struct.
+- [struct doc](https://hexdocs.pm/elixir/1.12.3/Kernel.html#defstruct/1)
+- [struct doc#2](https://hexdocs.pm/elixir/1.12.3/Kernel.SpecialForms.html#%25/2)
 
 A struct is a tagged map that allows developers to provide default values for keys, tags to be used in polymorphic dispatches and compile time assertions.
 
@@ -214,3 +315,94 @@ defmodule User do
 	defstruct name: nil, age: nil
 end
 ```
+
+```elixir
+elixir assertion_test.exs
+```
+
+
+## HTTP Client
+
+- [http poison](https://github.com/edgurgel/httpoison/blob/main/mix.exs)
+  - This client has less dependencies than req
+
+```elixir
+iex> HTTPoison.start
+iex> HTTPoison.get! "https://postman-echo.com/get"
+%HTTPoison.Response{
+  status_code: 200,
+  body: "{\n  \"args\": {},\n  \"headers\": {\n    \"x-forwarded-proto\": \"https\",\n    \"x-forwarded-port\": \"443\",\n    \"host\": \"postman-echo.com\",\n    \"x-amzn-trace-id\": \"Root=1-644624fb-769bca0458e739dc07f6b630\",\n    \"user-agent\": \"hackney/1.18.1\"\n  },\n  \"url\": \"https://postman-echo.com/get\"\n}",
+  headers: [ ... ]
+}
+
+iex> HTTPoison.get! "http://localhost:1"
+** (HTTPoison.Error) :econnrefused
+iex> HTTPoison.get "http://localhost:1"
+{:error, %HTTPoison.Error{id: nil, reason: :econnrefused}}
+
+iex> HTTPoison.post "https://postman-echo.com/post", "{\"body\": \"test\"}", [{"Content-Type", "application/json"}]
+{:ok,
+ %HTTPoison.Response{
+   status_code: 200,
+   body: "{\n  \"args\": {},\n  \"data\": {\n    \"body\": \"test\"\n  },\n  \"files\": {},\n  \"form\": {},\n  \"headers\": {\n    \"x-forwarded-proto\": \"https\",\n    \"x-forwarded-port\": \"443\",\n    \"host\": \"postman-echo.com\",\n    \"x-amzn-trace-id\": \"Root=1-6446255e-703101813ec2e395202ab494\",\n    \"content-length\": \"16\",\n    \"user-agent\": \"hackney/1.18.1\",\n    \"content-type\": \"application/json\"\n  },\n  \"json\": {\n    \"body\": \"test\"\n  },\n  \"url\": \"https://postman-echo.com/post\"\n}",
+   headers: [ ... ]
+ }}
+```
+
+
+```elixir
+case HTTPoison.get(url) do
+  {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+    IO.puts body
+  {:ok, %HTTPoison.Response{status_code: 404}} ->
+    IO.puts "Not found :("
+  {:error, %HTTPoison.Error{reason: reason}} ->
+    IO.inspect reason
+end
+```
+
+- [req](https://github.com/edgurgel/httpoison/blob/main/mix.exs)
+  - Batteries included client
+
+## Test External Libraries
+
+```elixir
+git clone https://github.com/phoenixframework/phoenix.git
+cd phoenix
+```
+
+```elixir
+mix deps.get
+```
+
+
+```elixir
+mix test
+```
+
+```elixir
+mix deps.get
+mix deps.tree
+```
+
+
+```elixir
+defp deps do
+  [
+    {:phoenix, path: "../phoenix"}
+  ]
+end
+```
+
+```elixir
+iex -S mix
+```
+
+
+```elixir
+git clone https://github.com/elixir-lang/elixir.git
+cd elixir
+make test
+
+```
+
