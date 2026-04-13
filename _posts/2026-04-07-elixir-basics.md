@@ -106,6 +106,80 @@ defmodule AssertionTest do
 end
 ```
 
+## pattern matching
+
+- "=" is called the match operator
+    - it is not an assignment operator as in other languages.
+- you can perform pattern matching by deconstructing complex data types
+    - pattern match error will occur if sides can't be matched
+    - you can pattern match against list
+    - you don't care about a value you can put underscore "_"
+
+```elixir
+# matching operator
+x = 1
+1 = x
+
+# complex data type example
+{a, b, c} = {:hello, "world", 42}
+
+IO.puts(a)
+IO.puts(b)
+IO.puts(c)
+
+# list example
+
+[head | tail] = [1,2,3,4,5]
+IO.puts(head)
+IO.puts(tail)
+
+# using underscore for "I don't cares"
+[head | _] = [1,2,3,4,5]
+IO.puts(head)
+
+```
+
+### pin operator
+
+- variables in elxir can be rebounded
+
+```elixir
+x = 1
+x = 2
+```
+
+- there are times were we don't want to rebind a variable.
+    - use the pin operator when you want to pattern match against a variables existing value rather than rebinding the variable
+    - it is a valiue checking mechanism to help enforce the matching of the original value.
+
+```elixir
+# example
+x = 1
+^x = 2 # this will error
+
+## example 2
+id = 10
+case {99, "ok"} do
+  {id, status} -> {:matched, id, status} # id becomes 99
+end
+
+## example 3
+id = 10
+case {10, "ok"} do
+  {^id, status} -> {:matched, status} # ^id is still 10
+end
+```
+
+## read from IO
+
+main.exs
+```elixir
+    input = IO.read(:stdio, :eof)
+```
+
+```bash
+elixir main.exs < input.txt
+```
 ## open file
 
 ```elixir

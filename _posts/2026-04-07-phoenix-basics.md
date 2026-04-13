@@ -104,3 +104,43 @@ lsof -i :4000
 
 kill -9 PID
 ```
+
+
+## Phoenix Components
+
+[component docs](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
+
+Define reusable function components with HEEx templates.
+
+A function component is any function that receives an assigns map as an argument and returns a rendered struct built with the ~H sigil:
+
+```elixir
+defmodule MyComponent do
+  # In Phoenix apps, the line is typically: use MyAppWeb, :html
+  use Phoenix.Component
+
+  def greet(assigns) do
+    ~H"""
+    <p>Hello, {@name}!</p>
+    """
+  end
+end
+```
+
+## Embedding external template files
+
+[embedded template docs](https://hexdocs.pm/phoenix_live_view/Phoenix.Component.html)
+```elixir
+defmodule MyAppWeb.Components do
+  use Phoenix.Component
+
+  embed_templates "cards/*"
+
+  def landing_hero(assigns) do
+    ~H"""
+    <.pricing_card />
+    <.features_card />
+    """
+  end
+end
+```
