@@ -144,3 +144,9 @@ defmodule MyAppWeb.Components do
   end
 end
 ```
+
+
+### if you get inotify error messages in console, install it.
+```bash
+sudo dnf install inotify-tools
+```
