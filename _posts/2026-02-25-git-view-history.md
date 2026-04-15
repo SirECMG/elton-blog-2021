@@ -38,3 +38,41 @@ query for author
 git log --author="Elton"
 ```
 
+
+how frequently a file changed in repo
+
+```bash
+git log --name-only --pretty=format: | sort | uniq -c | sort -nr | head -50
+```
+
+search commits for particular strings
+```bash
+git log -p -G "PaymentProcessor|def charge|class User" -- .
+```
+
+search commit messages
+```bash
+git log --oneline --grep="refactor\|auth\|payment"
+```
+
+who commited the most
+```bash
+git shortlog -sn
+```
+
+who changed the most on a particular folder
+```bash
+git shortlog -sn -- app/services
+```
+
+who commited the most in a particular folder
+```bash
+git shortlog -sn -- app/services
+```
+
+shows commit messages in reverse order useful to glance history
+```bash
+git log --reverse --oneline
+```
+
+
