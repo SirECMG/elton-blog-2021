@@ -32,3 +32,9 @@ These math properties enables an important property.
 - it is easy to compute nP if you know n. (nP means "point P added to itself n times" using elliptic curve point addition.)
 - it is hard to go backwards and find n from P and nP
 
+
+### Use-cases for Elliptic Curve
+
+With these surface level knowledge, we can study the use-case and math more in-depth for elliptic curves. These are key exchange(sharing secrets), digital signatures, verifying signatures, and encryption.
+
+[add_reference_wiki_ecc](addlinkhere)
