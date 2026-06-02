@@ -6,87 +6,35 @@ date:   2026-01-21 11:22:00 +0800
 categories: git
 ---
 
+[paper on elliptic curve](https://www.secg.org/sec1-v2.pdf#page=52)
+
+### Elliptic Curve Overview
+
+### Definition
+
 An elliptic curve is an equation of:
 
+>y^2 = x^3 + ax + b
 
-> y^2 = x^3 + bx + c
+What makes elliptic curves interesting is that it has math properties that make them useful for key exchange (sharing secrets), digital signatures and encryption in the context of cryptography.
 
-What makes elliptic curve interesting is that they define a math structure with properties that make them useful for key exchange, and digital signature in the context of cryptography.
+### Math Properties
 
 Graphically when plotted with real numbers, they represent a curve. But when graphed using finite fields visually it looks like a scatter plot.
 
-Elliptic curves are useful because of "point addition". Point addition is where we can do an operation on two of the points on the curve and get a third point also on the curve. With point addition points behave more like numbers, you can combine them, repeat the operation and build harder operations from simipler ones.
+Elliptic curves are useful because of “point addition”. Point addition is where we can do an operation on two of the points on the curve and get a third point also on the curve. This is because elliptic curves obey closure properties. More formally, they are classified as a math group. 
 
-This enables an important property.
+With point addition points behave more like numbers we are used to (real numbers) or more accurately math groups. you can combine them, repeat the operation and build harder operations from simpiler ones (since adding points will result on points on the curve).
 
-    - it is easy to compute nP if you know n.
-    - it is hard to go backwards and find n from P and nP
+### discrete log problem
+These math properties enables an important property.
 
-
-If you look closely, this property is a great set-up for public-key generation from a private scalar, key exchange and digital signatures.
-
-## Math Foundations of EC
-
-### math properties of point addition
-
-- identitiy
-- commutativity
-- associativity
-- invertibility
-
-### deriving the point addition formula
-
-### point addition for when x1 != x2
-
-### point addition for when x1 == x2
-
-### point addition for P1 == P2
-
-### point addition for tangent (exception)
+- it is easy to compute nP if you know n. (nP means "point P added to itself n times" using elliptic curve point addition.)
+- it is hard to go backwards and find n from P and nP
 
 
-## Elliptic Curve Cryptography
+### Use-cases for Elliptic Curve
 
-## EC over Reals
+With these surface level knowledge, we can study the use-case and math more in-depth for elliptic curves. These are key exchange(sharing secrets), digital signatures, verifying signatures, and encryption.
 
-## EC over Finite Fields
-
-## Point Addition over Finite Fields
-
-## Scalar Multiplication for Elliptic Curves
-
-## Discrete Log Problem
-
-## Mathematical Groups
-
-### Identity
-
-### Closure
-
-### Invertibility
-
-### Commutativity
-
-### Associativity
-
-
-## Defining Curve for Bitcoin
-
-
-### How Big is 2^256
-
-## Public Key Cryptography
-
-### Signing
-
-#### Inscribing the target
-
-#### Signing in Depth
-
-#### Creating a signature
-
-### Verifying
-
-#### Verification in Depth
-
-### Importance of a Unique k
+[add_reference_wiki_ecc](addlinkhere)
