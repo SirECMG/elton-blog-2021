@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "configure llama.cpp on fedora"
-date:   2026-07-05 11:49:00 -0700
+date:   2026-07-05 01:36:00 -0700
 tags: [ai]
 ---
 
