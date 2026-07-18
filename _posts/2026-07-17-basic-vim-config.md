@@ -2,7 +2,7 @@
 layout: post
 title:  "basic git config"
 date:   2026-07-05 11:49:00 -0700
-tags: [windows]
+tags: [git]
 ---
 
 Here is my super minimal .vimrc
