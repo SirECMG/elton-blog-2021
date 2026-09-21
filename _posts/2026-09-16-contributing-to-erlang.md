@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Contributing to Elang"
+title:  "Contributing to Erlang"
 date:   2026-09-16 03:40:00 -0700
 tags: [beam]
 ---
