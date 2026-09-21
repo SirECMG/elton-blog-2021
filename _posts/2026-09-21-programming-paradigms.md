@@ -1,56 +1,61 @@
 ---
 layout: post
-title:  "Contributing to Elang
-date:   2026-09-16 03:40:00 -0700
-tags: [beam]
+title:  "Programming Paradigms"
+date:   2026-09-21 11:26:00 -0700
+tags: [ insights ]
 ---
 
-# Contributing to Erlang
+# Programming Paradigms
 
-[prereq's](https://github.com/erlang/otp/blob/master/HOWTO/INSTALL.md#required-utilities)
-[development docs](https://github.com/erlang/otp/blob/master/HOWTO/DEVELOPMENT.md)
+Lately, I have studying various different programming in attempts to get insight on "the fundamentals".
 
-```text
-export ERL_TOP=`pwd`
-./otp_build configure && make
-```
+I have dabbled in languages such as:
 
-## faster builds
+- elixir
+- erlang
+- ruby
+- rust
+- C++/C
+- C#/Java
 
-```text
-## Change N to be at least the number of cores or hyper-threads available
-export MAKEFLAGS=-jN
-```
+These programming languages gave me some insights on the essence of some of the modern paradigms. And what mainstream programmming languages are trying to incorporate in their feature set. 
 
-## how to debug
+In particular, ruby and elixir has given me some insight on these fundamentals. I will publish some short notes on the insights to help me remember what I have learned.
 
-I am still learning how to debug erlang. But what you can do is add io:format on speific test cases.
-And when executing individual tests, a website is created for that test result. You will see your log messages there.
+## Object Oriented Programming
 
-I am still exploring other options, I believe you can use erl and debugger:start(). but I need to get familiar with that.
-```text
-pending..
-```
+Ruby has taught me the following about object oriented programming. In OOP the concept of 
+"message passing" is fundamental. In OOP the universe centers around the idea of objects. Objects interact with each other and send messages between them (and possibly itself).
+Functions are not an idea in this world (although modern programming languages hide this with sugar syntax). In OOP functions or blocks of code are tucked into methods.
 
+In objects have state and behaviors. It is best practice to send messages. So if you want to broadcast state between objects, it is best to do so through behaviors (aka methods).
 
-## running specific tests
+The idea behind OOP is to model the real world the way a human would, this makes it easy for us to write code in a way a human would naturally thing, but state can get complicated quickly due to objects loading code from different objects and the developer maintaining and writing the code needs to keep in context all the of the origins of code (the current object uses).
 
-[testing document](https://github.com/erlang/otp/blob/master/HOWTO/TESTING.md#running-tests-while-developing)
+## Functional Programming
 
-```text
-# ERL_TOP needs to be set correctly
-cd /path/to/otp
-export ERL_TOP=`pwd`
+Elixir has taught me how functional programming simplifies the programming model by functions. In functional programming, there are just functions and data. Code is localized through functions. Code is organized through Modules. Data is modified in functions by created new states rather than mutating the existing data.
+
+The benefits of this is that programs are easier to maintain, the downsides of this is that performance is not optimal (mutating is more performant than new allocations). But in terms of BEAM VM, garbage collection is fast, due to non-shared state.
+
+## Lower-Level Programming
 
 
-# Build Erlang/OTP
-#
-# Note that make test will only compile test code except when
-# make test is executed from $ERL_TOP.
-./otp_build setup -a
+After analyzing these two programming languages (Ruby and Elixir), Observed and came up with the insight that all other programming languages(mainstream) blend the two and sometimes mix in the idea of incorporating system level programming.
 
-# Run a test case
-(cd $ERL_TOP/erts/emulator && make test ARGS="-suite binary_SUITE -case deep_bitstr_lists")
-make emulator_test ARGS="-suite binary_SUITE -case deep_bitstr_lists"
+In system level programming languages, the programming languages puts the machine as the center of the universe. You have to keep in context of memory, while you are writing code and what parts of memory owns what and when to free that memory used. C, C++, Rust helps us write code to accomplish this, but you also have to incorporate your business logic.
 
-```
+
+## Conclusion
+
+After spending several months coding in different langauges.
+
+I have personally, took appreciation of
+
+- Erlang
+- C/C++/Rust
+- JavaScript
+
+And for languages that help pay the bills and give me life there are
+
+- Java/C#
