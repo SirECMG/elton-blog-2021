@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Contributing to Elang
+title:  "Contributing to Elang"
 date:   2026-09-16 03:40:00 -0700
 tags: [beam]
 ---
@@ -21,7 +21,6 @@ export ERL_TOP=`pwd`
 ## Change N to be at least the number of cores or hyper-threads available
 export MAKEFLAGS=-jN
 ```
-
 ## how to debug
 
 I am still learning how to debug erlang. But what you can do is add io:format on speific test cases.
@@ -52,5 +51,4 @@ export ERL_TOP=`pwd`
 # Run a test case
 (cd $ERL_TOP/erts/emulator && make test ARGS="-suite binary_SUITE -case deep_bitstr_lists")
 make emulator_test ARGS="-suite binary_SUITE -case deep_bitstr_lists"
-
 ```
