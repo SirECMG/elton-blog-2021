@@ -45,6 +45,23 @@ After analyzing these two programming languages (Ruby and Elixir), Observed and 
 
 In system level programming languages, the programming languages puts the machine as the center of the universe. You have to keep in context of memory, while you are writing code and what parts of memory owns what and when to free that memory used. C, C++, Rust helps us write code to accomplish this, but you also have to incorporate your business logic.
 
+## Type driven developement
+
+With a language like rust, I have learned the value of types. With types being so strong, we can prove something is correct by leveraging and leaning against the compiler.
+For example in Rust, we can write something like the following
+
+```rust
+
+struct Node<T> {
+    x: T,
+    next: Option<Box<Node<T>>>
+};
+```
+
+what is interestin is the value of next. The value of next could either be null, or contain an actual value on heap and this can be enforced with the strong type system.
+Box is something that is context aware of the heap and combined with options type, the value can either be Some or None. With strong typing the compiler, you get safety through thte type system. 
+
+This makes rust such an interesting programming language. This language actually is more lower-level than a language like C++ which hides or assumes you understand and know what yyou are doing. Rust makes this explict using the type system.
 
 ## Conclusion
 
