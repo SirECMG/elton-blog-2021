@@ -26,6 +26,18 @@ sudo dnf install capnproto
 sudo dnf install qt6-qtbase-devel qt6-qttools-devel
 sudo dnf install qt6-qtwayland
 ```
+
+## Get the dependencies (OpenSUSE)
+```
+sudo zypper install gcc-c++ cmake make python3
+sudo zypper install libevent-devel boost-devel
+sudo zypper install sqlite3-devel
+sudo zypper install zeromq-devel
+sudo zypper install systemtap-sdt-devel
+sudo zypper install capnproto libcapnp-devel
+sudo zypper install qt6-base-devel qt6-tools-devel
+sudo zypper install qt6-wayland
+```
 ## Build the Project
 
 ```
