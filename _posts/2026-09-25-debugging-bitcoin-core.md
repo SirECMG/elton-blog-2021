@@ -12,6 +12,17 @@ cmake -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build -j32
 ```
 
+# command for faster build
+
+```text
+cmake --build build --target bitcoind bitcoin-cli -j "$(nproc)"
+```
+
+# command for cleaning project
+```text
+cmake --build build --target clean
+```
+
 # run gdb against the binary file
 
 ```text
