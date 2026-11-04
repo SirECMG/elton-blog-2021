@@ -360,6 +360,65 @@
     }
     .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 
+    .import-dialog {
+      width: min(620px, calc(100vw - 32px));
+      max-height: calc(100vh - 32px);
+      padding: 0;
+      overflow: hidden;
+      border: 0;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 24px 70px #12203955;
+      color: var(--ui-text);
+    }
+    .import-dialog::backdrop { background: #17243980; backdrop-filter: blur(2px); }
+    .import-dialog-content { padding: 24px; }
+    .import-dialog-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+    .import-dialog-header h2 { margin: 0; font-size: 19px; letter-spacing: -.35px; }
+    .import-dialog-header p { margin: 7px 0 0; color: var(--ui-muted); font-size: 12px; line-height: 1.55; }
+    .dialog-close {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      padding: 0;
+      border: 1px solid var(--ui-border);
+      border-radius: 8px;
+      background: #fff;
+      color: #66768c;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .import-divider {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 19px 0;
+      color: #8a97a9;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+    }
+    .import-divider::before, .import-divider::after { content: ""; height: 1px; flex: 1; background: var(--ui-border); }
+    .import-json-label { display: block; margin-bottom: 8px; color: #374861; font-size: 12px; font-weight: 700; }
+    .import-json-text {
+      display: block;
+      width: 100%;
+      min-height: 210px;
+      max-height: 42vh;
+      padding: 12px;
+      resize: vertical;
+      border: 1px solid #d8e0eb;
+      border-radius: 9px;
+      background: #fbfcfe;
+      color: #203149;
+      font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+      tab-size: 2;
+    }
+    .import-error { min-height: 18px; margin: 8px 0 0; color: var(--ui-danger); font-size: 11px; line-height: 1.45; }
+    .import-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
+    .import-file-button { width: 100%; }
+
     /* ================================================================
        05. PRINTABLE RESUME — MATCHES THE UPLOADED REFERENCE
        Times New Roman, centered header, black rules, and blue links.
@@ -512,7 +571,7 @@
     @page { size: A4 portrait; margin: 0; }
     @media print {
       html, body { width: auto !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
-      .topbar, .editor-pane, .preview-header, .preview-footer, .toast { display: none !important; }
+      .topbar, .editor-pane, .preview-header, .preview-footer, .toast, .import-dialog { display: none !important; }
       .workspace, .preview-pane, .preview-scroll, .preview-stage, .page-size-holder {
         display: block !important;
         width: auto !important;
@@ -626,6 +685,27 @@
   <!-- This non-printing, accessible status message confirms actions. -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+  <dialog class="import-dialog" id="importDialog" aria-labelledby="importDialogTitle">
+    <div class="import-dialog-content">
+      <div class="import-dialog-header">
+        <div>
+          <h2 id="importDialogTitle">Import resume data</h2>
+          <p>Choose an exported JSON file or paste the JSON text directly. Importing replaces the current resume data.</p>
+        </div>
+        <button type="button" class="dialog-close" id="closeImportDialog" aria-label="Close import dialog">×</button>
+      </div>
+      <button type="button" class="button import-file-button" id="chooseImportFile">Choose JSON file</button>
+      <div class="import-divider">or paste JSON</div>
+      <label class="import-json-label" for="importJsonText">JSON text</label>
+      <textarea class="import-json-text" id="importJsonText" spellcheck="false" autocomplete="off" placeholder='Paste an exported object here, for example: {"personal":{"name":"Your Name"}, ...}'></textarea>
+      <p class="import-error" id="importError" role="alert" aria-live="polite"></p>
+      <div class="import-dialog-actions">
+        <button type="button" class="button" id="cancelImportDialog">Cancel</button>
+        <button type="button" class="button primary" id="importJsonButton">Import pasted JSON</button>
+      </div>
+    </div>
+  </dialog>
+
   <script>
     /* =================================================================
        08. INITIAL DATA AND STORAGE SETTINGS
@@ -692,7 +772,7 @@
         education: [
           {
             degree: "Bachelor of Science in Computer Science and Engineering",
-            school: "Jatiya Kabi Kazi Nazrul Islam University, Bangladesh",
+            school: "San Jose State University, San Jose California",
             dates: "2023 – Present"
           }
         ],
@@ -1694,26 +1774,77 @@
         showToast("Resume backup downloaded.");
       });
 
-      // Open the native file picker without needing any upload server.
       const importInput = document.getElementById("importInput");
-      document.getElementById("importButton").addEventListener("click", () => importInput.click());
+      const importDialog = document.getElementById("importDialog");
+      const importJsonText = document.getElementById("importJsonText");
+      const importError = document.getElementById("importError");
+
+      function setImportError(message = "") {
+        importError.textContent = message;
+      }
+
+      function parseImportText(rawText) {
+        let source = String(rawText || "").trim();
+        if (source.startsWith("```")) {
+          source = source.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+        }
+        if (!source) throw new Error("Paste JSON text before importing.");
+        let parsed = JSON.parse(source);
+        if (typeof parsed === "string") parsed = JSON.parse(parsed);
+        return parsed;
+      }
+
+      function applyImportedData(parsed) {
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) || !parsed.personal) {
+          throw new Error("This does not appear to be exported resume data.");
+        }
+        data = normalizeData(parsed);
+        renderEditor();
+        renderResume();
+        saveData();
+        importJsonText.value = "";
+        setImportError();
+        importDialog.close();
+        showToast("Resume data imported successfully.");
+      }
+
+      document.getElementById("importButton").addEventListener("click", () => {
+        setImportError();
+        importDialog.showModal();
+        requestAnimationFrame(() => importJsonText.focus());
+      });
+      document.getElementById("chooseImportFile").addEventListener("click", () => importInput.click());
+      document.getElementById("closeImportDialog").addEventListener("click", () => importDialog.close());
+      document.getElementById("cancelImportDialog").addEventListener("click", () => importDialog.close());
+      document.getElementById("importJsonButton").addEventListener("click", () => {
+        try {
+          applyImportedData(parseImportText(importJsonText.value));
+        } catch (error) {
+          setImportError(error instanceof SyntaxError ? `Invalid JSON: ${error.message}` : error.message);
+          importJsonText.focus();
+        }
+      });
+      importJsonText.addEventListener("keydown", event => {
+        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+          event.preventDefault();
+          document.getElementById("importJsonButton").click();
+        }
+      });
+      importDialog.addEventListener("click", event => {
+        if (event.target === importDialog) importDialog.close();
+      });
 
       // Read imported .json files directly in the user's browser.
       importInput.addEventListener("change", async () => {
         const file = importInput.files && importInput.files[0];
         if (!file) return;
         try {
-          const parsed = JSON.parse(await file.text());
-          if (!parsed || typeof parsed !== "object" || !parsed.personal) {
-            throw new Error("Invalid resume file");
-          }
-          data = normalizeData(parsed);
-          renderEditor();
-          renderResume();
-          saveData();
-          showToast("Resume data imported successfully.");
+          applyImportedData(parseImportText(await file.text()));
         } catch (error) {
-          showToast("Couldn't import that file. Choose an exported resume-data.json backup.");
+          setImportError(error instanceof SyntaxError
+            ? `The selected file contains invalid JSON: ${error.message}`
+            : error.message);
+          if (!importDialog.open) importDialog.showModal();
         }
         importInput.value = "";
       });
