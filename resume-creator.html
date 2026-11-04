@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    A4 Resume Builder — reference-matched edition
+    ------------------------------------------------
+    A single, offline-ready HTML file with no external dependencies.
+    The editor uses vanilla JavaScript; the resume uses regular HTML and CSS.
+    Open this file in a modern web browser, edit, and use Print / Save PDF.
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>A4 Resume Builder</title>
+
+  <style>
+    /* ================================================================
+       01. BASE STYLES AND THE EDITOR'S COLOR TOKENS
+       These colors affect the application UI, not the printed resume.
+       ================================================================ */
+    :root {
+      --ui-background: #eef1f6;
+      --ui-surface: #ffffff;
+      --ui-text: #172439;
+      --ui-muted: #738095;
+      --ui-border: #e2e7ef;
+      --ui-primary: #3457c5;
+      --ui-primary-hover: #2747b0;
+      --ui-primary-pale: #edf2ff;
+      --ui-danger: #b8464b;
+    }
+
+    /* Keep elements' widths predictable as padding and borders change. */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { min-height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--ui-background);
+      color: var(--ui-text);
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid #9db4ff;
+      outline-offset: 2px;
+    }
+
+    /* ================================================================
+       02. APPLICATION HEADER
+       Includes local backup, restore, reset, and printing actions.
+       ================================================================ */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 74px;
+      padding: 12px 28px;
+      background: var(--ui-surface);
+      border-bottom: 1px solid var(--ui-border);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      color: #fff;
+      background: #263e89;
+      border-radius: 11px;
+    }
+    .brand-icon svg { width: 25px; height: 25px; }
+    .brand h1 { margin: 0; font-size: 16px; letter-spacing: -.3px; }
+    .brand p { margin: 5px 0 0; color: var(--ui-muted); font-size: 11px; }
+    .top-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 36px;
+      padding: 9px 12px;
+      border: 1px solid #d8dfeb;
+      border-radius: 8px;
+      background: #fff;
+      color: #30415d;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .button:hover { background: #f4f7fc; }
+    .button.primary {
+      background: var(--ui-primary);
+      border-color: var(--ui-primary);
+      color: #fff;
+    }
+    .button.primary:hover { background: var(--ui-primary-hover); }
+    .button.danger { color: var(--ui-danger); }
+    .button.small { min-height: 30px; padding: 7px 10px; font-size: 11px; }
+
+    /* ================================================================
+       03. TWO-PANEL WORKSPACE: EDITOR LEFT, A4 PREVIEW RIGHT
+       ================================================================ */
+    .workspace {
+      display: grid;
+      grid-template-columns: 430px minmax(0, 1fr);
+      height: calc(100vh - 74px);
+      min-height: 590px;
+    }
+    .editor-pane {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+      background: #fff;
+      border-right: 1px solid var(--ui-border);
+    }
+    .editor-intro { padding: 25px 28px 14px; }
+    .eyebrow {
+      margin-bottom: 9px;
+      color: #4262b1;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+    .editor-intro h2 { margin: 0; font-size: 25px; letter-spacing: -1px; }
+    .editor-intro p {
+      margin: 8px 0 0;
+      color: var(--ui-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* Each tab displays one manageable group of resume fields. */
+    .tabs {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--ui-border);
+      padding: 0 17px;
+      scrollbar-width: thin;
+    }
+    .tab {
+      flex: 1 0 auto;
+      padding: 14px 8px 12px;
+      border: 0;
+      border-bottom: 3px solid transparent;
+      background: transparent;
+      color: var(--ui-muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tab:hover { color: #3d56a4; }
+    .tab.active { border-bottom-color: var(--ui-primary); color: #2b4caa; }
+    .editor-scroller {
+      min-height: 0;
+      flex: 1;
+      overflow-y: auto;
+      padding: 23px 28px 40px;
+      scrollbar-color: #bdc8d9 transparent;
+    }
+    .editor-heading { margin: 0 0 17px; }
+    .editor-heading h3 { margin: 0; font-size: 17px; letter-spacing: -.35px; }
+    .editor-heading p { margin: 6px 0 0; color: var(--ui-muted); font-size: 12px; line-height: 1.5; }
+    .subheading { margin: 26px 0 13px; color: #283c5f; font-size: 13px; }
+    .section-note { margin: 14px 0 4px; color: var(--ui-muted); font-size: 11px; line-height: 1.5; }
+
+    /* Consistent label/field spacing makes long forms easier to scan. */
+    .field { display: block; margin-bottom: 15px; }
+    .field-label { display: block; margin-bottom: 7px; color: #374861; font-size: 12px; font-weight: 700; }
+    .field input, .field textarea, .field select {
+      display: block;
+      width: 100%;
+      padding: 11px 12px;
+      background: #fff;
+      border: 1px solid #d8e0eb;
+      border-radius: 8px;
+      color: #203149;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: #9da9b9; }
+    .field textarea { min-height: 88px; resize: vertical; }
+    .field-hint { display: block; margin-top: 6px; color: #8090a3; font-size: 11px; line-height: 1.5; }
+    .field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
+    .field-grid > * { min-width: 0; }
+
+    /* Reusable cards contain each editable skill, project, and entry. */
+    .entry-card {
+      margin-bottom: 13px;
+      padding: 15px 15px 3px;
+      border: 1px solid var(--ui-border);
+      border-radius: 11px;
+      background: #fcfdff;
+    }
+    .entry-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+    .entry-heading strong { font-size: 12px; color: #243653; }
+    .entry-heading-main { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .drag-handle {
+      display: inline-grid;
+      place-items: center;
+      width: 27px;
+      height: 27px;
+      flex: 0 0 27px;
+      border: 1px solid #d7dfeb;
+      border-radius: 6px;
+      background: #fff;
+      color: #718098;
+      font-size: 16px;
+      line-height: 1;
+      cursor: grab;
+      user-select: none;
+    }
+    .drag-handle:active { cursor: grabbing; }
+    .reorderable-field {
+      position: relative;
+      padding: 11px 11px 1px 44px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+    }
+    .reorderable-field > .drag-handle {
+      position: absolute;
+      top: 8px;
+      left: 7px;
+    }
+    .reorderable-item.dragging { opacity: .38; }
+    .reorderable-item.drop-before { box-shadow: inset 0 3px 0 #5676d8; }
+    .reorderable-item.drop-after { box-shadow: inset 0 -3px 0 #5676d8; }
+    .arrange-list { display: grid; gap: 9px; }
+    .arrange-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border: 1px solid var(--ui-border);
+      border-radius: 9px;
+      background: #fcfdff;
+      color: #2b3d5a;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .arrange-item .drag-handle { margin-left: auto; }
+    .drag-help { margin: 0 0 17px; color: var(--ui-muted); font-size: 11px; line-height: 1.55; }
+    .add-button {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 12px;
+      background: #f6f8ff;
+      border: 1px dashed #a7b6df;
+      border-radius: 9px;
+      color: #3f5caa;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .add-button:hover { background: #edf2ff; }
+    .notice {
+      padding: 13px 14px;
+      border: 1px solid #dfe8fa;
+      border-radius: 9px;
+      background: #f3f6ff;
+      color: #5a6d90;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    .notice strong { color: #344c81; }
+
+    /* ================================================================
+       04. A4 PREVIEW CHROME
+       The page always has a fixed A4 height. The resume content has its
+       own separate fit scale (see section 14), which IS preserved in print.
+       ================================================================ */
+    .preview-pane { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 21px 31px 12px;
+    }
+    .preview-header h2 { margin: 0 0 5px; font-size: 14px; }
+    .preview-header p { margin: 0; color: var(--ui-muted); font-size: 12px; }
+    .a4-label {
+      padding: 8px 11px;
+      border: 1px solid #d5ddec;
+      border-radius: 7px;
+      background: #fff;
+      color: #5e7088;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .preview-scroll { flex: 1; min-height: 0; overflow: auto; padding: 17px 22px 45px; }
+    .preview-stage { display: flex; justify-content: center; align-items: flex-start; min-height: 100%; }
+    .page-size-holder { position: relative; flex: 0 0 auto; }
+    .a4-sheet {
+      /* The browser uses CSS mm units to produce a true 210 × 297 mm page. */
+      width: 210mm;
+      /* Fixed height prevents a second page even when content is very long.
+         JavaScript scales the contents rather than clipping them. */
+      height: 297mm;
+      min-height: 297mm;
+      padding: 4mm 6mm 8mm;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 16px 40px #22375525, 0 1px 5px #1a29411a;
+      transform-origin: top left;
+    }
+    .preview-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      padding: 13px 18px;
+      background: #f7f9fd;
+      border-top: 1px solid #dfe5ef;
+      color: #64748c;
+      font-size: 11px;
+      text-align: center;
+    }
+    /* The live fit indicator warns when downsizing hurts readability. */
+    .fit-status { display: inline; color: #2d7159; font-weight: 800; }
+    .fit-status.warning { color: #b35d2e; }
+    .save-status { display: inline-block; color: #78889b; font-size: 11px; }
+    .save-status::before {
+      display: inline-block;
+      content: "";
+      width: 7px;
+      height: 7px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background: #35a17a;
+    }
+    .toast {
+      position: fixed;
+      z-index: 10;
+      bottom: 22px;
+      left: 50%;
+      max-width: calc(100% - 35px);
+      padding: 12px 17px;
+      border-radius: 9px;
+      background: #263550;
+      box-shadow: 0 8px 28px #12203940;
+      color: #fff;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 10px);
+      transition: opacity 150ms, transform 150ms;
+    }
+    .toast.visible { opacity: 1; transform: translate(-50%, 0); }
+
+    /* ================================================================
+       05. PRINTABLE RESUME — MATCHES THE UPLOADED REFERENCE
+       Times New Roman, centered header, black rules, and blue links.
+       No editor colors or card styling appear on the printed page.
+       ================================================================ */
+    .resume {
+      --cv-font-size: 10.8pt;
+      --cv-spacing: 1;
+      /* Transform scales the ENTIRE resume: type, lines, and whitespace.
+         Increasing its layout width by 1/scale keeps the right edge at A4. */
+      --resume-fit: 1;
+      width: calc(100% / var(--resume-fit));
+      transform: scale(var(--resume-fit));
+      transform-origin: top left;
+      font-family: "Times New Roman", Times, serif;
+      font-size: var(--cv-font-size);
+      line-height: 1.34;
+      color: #000;
+      /* Break even exceptionally long user-entered words before printing. */
+      overflow-wrap: anywhere;
+    }
+    .resume a { color: #0000ee; text-decoration: none; }
+    .resume a:hover { text-decoration: underline; }
+    .resume .cv-contact a { color: #000; }
+    .resume .cv-head { text-align: center; }
+    .resume .cv-name {
+      margin: 0;
+      font-size: 12.7pt;
+      line-height: 1.35;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .resume .cv-job-title { margin: 11px 0 13px; font-size: 10.8pt; }
+    .resume .cv-contact, .resume .cv-social { margin: 0; line-height: 1.65; }
+    .resume .cv-separator { margin: 0 4px; }
+    .resume .cv-social { margin-top: 1px; }
+    .resume .cv-objective { margin: 0; text-align: left; }
+
+    /* Headings are uppercase with a thin black line beneath each one. */
+    .resume .cv-section { margin-top: calc(22px * var(--cv-spacing)); }
+    .resume .cv-section-title {
+      margin: 0 0 calc(10px * var(--cv-spacing));
+      padding: 0 0 7px;
+      border-bottom: 1px solid #111;
+      font-size: 11.3pt;
+      font-weight: 700;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    /* Skills display as bold category labels followed by plain text. */
+    .resume .cv-skill-list { padding: 0 0 0 5mm; }
+    .resume .cv-skill { margin: 0 0 calc(5px * var(--cv-spacing)); }
+    .resume .cv-skill strong { font-weight: 700; }
+
+    /* Projects have a left-aligned title/stack and right-aligned links. */
+    .resume .cv-project, .resume .cv-experience, .resume .cv-education {
+      margin: calc(12px * var(--cv-spacing)) 0 calc(27px * var(--cv-spacing)) 5mm;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .resume .cv-project:last-child, .resume .cv-education:last-child,
+    .resume .cv-experience:last-child { margin-bottom: 0; }
+    .resume .cv-project-top, .resume .cv-education-top, .resume .cv-experience-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .resume .cv-project-name { text-transform: uppercase; }
+    .resume .cv-project-details { min-width: 0; }
+    .resume .cv-project-links { flex-shrink: 0; white-space: normal; font-style: italic; text-align: right; }
+    .resume .cv-project ul, .resume .cv-experience ul {
+      margin: 4px 0 0;
+      padding-left: 12mm;
+    }
+    .resume .cv-project li, .resume .cv-experience li {
+      padding-left: 1px;
+      margin-bottom: calc(5px * var(--cv-spacing));
+    }
+
+    /* Awards are bullets, with optional linked profile labels in the last bullet. */
+    .resume .cv-awards {
+      margin: 0;
+      padding-left: 12mm;
+    }
+    .resume .cv-awards li {
+      margin: 0 0 calc(13px * var(--cv-spacing));
+      padding-left: 2px;
+      break-inside: avoid;
+    }
+    .resume .cv-awards li:last-child { margin-bottom: 0; }
+
+    /* Education uses bold qualification, right-aligned dates, and school below. */
+    .resume .cv-education { margin-top: calc(11px * var(--cv-spacing)); }
+    .resume .cv-education-degree { font-weight: 700; }
+    .resume .cv-dates { flex-shrink: 0; font-style: italic; white-space: normal; text-align: right; }
+    .resume .cv-education-school, .resume .cv-experience-company { margin-top: 3px; }
+    .resume .cv-languages { margin-left: 5mm; }
+
+    /* Fine-tune the reference's deliberate whitespace between sections. */
+    .resume .cv-section--technical-skills { margin-top: 18px; }
+    .resume .cv-section--projects { margin-top: 46px; }
+    .resume .cv-section--awards-and-achievements { margin-top: 34px; }
+    .resume .cv-section--education { margin-top: 37px; }
+    .resume .cv-section--language { margin-top: 36px; }
+
+    /* Project lines sit a little farther below their heading in the PDF. */
+    .resume .cv-section--projects .cv-project:first-of-type { margin-top: 20px; }
+    .resume .cv-section--projects .cv-project:not(:first-of-type) ul { margin-top: 11px; }
+    .resume .cv-section--projects .cv-project:not(:first-of-type) li { margin-bottom: 10px; }
+    .resume .cv-section--projects .cv-project li { margin-bottom: 9px; }
+
+    /* Awards are more widely spaced than ordinary resume bullet lists. */
+    .resume .cv-section--awards-and-achievements .cv-section-title { margin-bottom: 27px; }
+    .resume .cv-section--awards-and-achievements .cv-awards li { margin-bottom: 21px; }
+    .resume .cv-section--awards-and-achievements .cv-awards li:last-child { margin-bottom: 0; }
+
+    /* Leave the same breathing room around education and the last line. */
+    .resume .cv-section--education .cv-education { margin-top: 24px; }
+    .resume .cv-section--language .cv-section-title { margin-bottom: 16px; }
+
+    /* ================================================================
+       06. RESPONSIVE EDITOR LAYOUT
+       On mobile the form sits above the zoomed-down page preview.
+       ================================================================ */
+    @media (max-width: 1050px) {
+      .workspace { grid-template-columns: 370px minmax(0, 1fr); }
+      .editor-intro { padding-left: 21px; padding-right: 21px; }
+      .editor-scroller { padding-left: 21px; padding-right: 21px; }
+    }
+    @media (max-width: 750px) {
+      .topbar { flex-wrap: wrap; padding: 13px 17px; }
+      .top-actions { width: 100%; }
+      .workspace { display: flex; flex-direction: column; height: auto; min-height: 0; }
+      .editor-pane { overflow: visible; border-right: 0; border-bottom: 1px solid var(--ui-border); }
+      .editor-scroller { overflow: visible; }
+      .tabs { position: sticky; top: 0; z-index: 2; background: #fff; }
+      .preview-pane, .preview-scroll { overflow: visible; }
+      .preview-header { padding: 20px 17px 12px; }
+      .preview-scroll { padding: 8px 8px 34px; }
+      .preview-footer { padding: 12px; }
+    }
+
+    /* ================================================================
+       07. REAL A4 PRINTING
+       Remove the editor and the PREVIEW scaling, but retain --resume-fit.
+       Print at A4 and 100%; the 210 x 297 mm sheet provides the margins.
+       ================================================================ */
+    @page { size: A4 portrait; margin: 0; }
+    @media print {
+      html, body { width: auto !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
+      .topbar, .editor-pane, .preview-header, .preview-footer, .toast { display: none !important; }
+      .workspace, .preview-pane, .preview-scroll, .preview-stage, .page-size-holder {
+        display: block !important;
+        width: auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+      }
+      .a4-sheet {
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        /* Turn off only the viewport-fit transform on the paper itself.
+           The nested .resume keeps its computed one-page fit transform. */
+        transform: none !important;
+        overflow: hidden !important;
+      }
+      .resume { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .resume a { color: #0000ee !important; }
+      .resume .cv-contact a { color: #000 !important; }
+      .resume .cv-project, .resume .cv-experience, .resume .cv-education {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- The top actions never print. They manage browser-local data and printing. -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <!-- Inline SVG is just an icon: no external library or network request. -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2.5h8l4 4V21H6a2 2 0 0 1-2-2V4.5a2 2 0 0 1 2-2Z" />
+          <path d="M14 2.5v4h4M8 11h7M8 15h8M8 19h6" />
+        </svg>
+      </div>
+      <div>
+        <h1>Resume Builder</h1>
+        <p>Reference-matched · Auto-fit one page · A4-ready</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="save-status" id="saveStatus">Saved on this device</span>
+      <button type="button" class="button" id="exportButton">Export data</button>
+      <button type="button" class="button" id="importButton">Import data</button>
+      <button type="button" class="button danger" id="resetButton">Reset</button>
+      <button type="button" class="button primary" id="printButton">Print / Save PDF</button>
+      <!-- Hidden native file picker, used when importing a JSON backup. -->
+      <input type="file" id="importInput" accept=".json,application/json" hidden>
+    </div>
+  </header>
+
+  <!-- Editing tabs group fields while Arrange controls the printed order. -->
+  <main class="workspace">
+    <aside class="editor-pane" aria-label="Resume editing form">
+      <div class="editor-intro">
+        <div class="eyebrow">Build your own resume</div>
+        <h2>Make it yours.</h2>
+        <p>Based on your uploaded PDF design. Every change appears on the A4 page instantly.</p>
+      </div>
+      <nav class="tabs" aria-label="Edit resume sections">
+        <button type="button" class="tab active" data-tab="personal">Personal</button>
+        <button type="button" class="tab" data-tab="skills">Skills</button>
+        <button type="button" class="tab" data-tab="experience">Experience</button>
+        <button type="button" class="tab" data-tab="projects">Projects</button>
+        <button type="button" class="tab" data-tab="extras">More</button>
+        <button type="button" class="tab" data-tab="arrange">Arrange</button>
+        <button type="button" class="tab" data-tab="layout">Layout</button>
+      </nav>
+      <!-- JavaScript renders fields for the currently selected tab here. -->
+      <div class="editor-scroller" id="editorScroller">
+        <div id="editorFields"></div>
+      </div>
+    </aside>
+
+    <!-- Only .a4-sheet and its resume contents are included when printing. -->
+    <section class="preview-pane" aria-label="Live resume preview">
+      <div class="preview-header">
+        <div>
+          <h2>Live A4 preview</h2>
+          <p>True paper dimensions: 210 × 297 mm</p>
+        </div>
+        <span class="a4-label">A4 · PORTRAIT</span>
+      </div>
+      <div class="preview-scroll" id="previewScroll">
+        <div class="preview-stage">
+          <!-- The holder preserves layout space while its child is scaled. -->
+          <div class="page-size-holder" id="pageSizeHolder">
+            <div class="a4-sheet" id="a4Sheet">
+              <!-- Safe DOM nodes are added to this article by renderResume(). -->
+              <article class="resume" id="resumeDocument" aria-label="Printable resume"></article>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="preview-footer">
+        <span>Print on <strong>A4</strong> at <strong>100% scale</strong>, with <strong>margins: none</strong> and <strong>headers/footers: off</strong>.</span>
+        <span class="fit-status" id="fitStatus" aria-live="polite">Checking one-page fit…</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- This non-printing, accessible status message confirms actions. -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* =================================================================
+       08. INITIAL DATA AND STORAGE SETTINGS
+       The sample text and real links come from the uploaded resume PDF.
+       Users can replace all the sample content; no data is sent online.
+       ================================================================= */
+    (function () {
+      "use strict";
+
+      // Changing this key creates a separate locally saved version of the app.
+      const STORAGE_KEY = "reference_matched_a4_resume_v1";
+
+      // Default resume: a faithful, editable starting point for the supplied PDF.
+      const DEFAULT_DATA = {
+        personal: {
+          name: "Elton Murillo",
+          title: "Software Engineer",
+          email: "eltonmurillo@proton.me",
+          phone: "+4153120534",
+          location: "San Francisco",
+          linkedinLabel: "LinkedIn",
+          linkedinUrl: "https://www.linkedin.com/in/eltonmurillo/",
+          githubLabel: "GitHub",
+          githubUrl: "https://github.com/sirecmg",
+          objective: "Looking to contribute skills and experience to further advancing bitcoin while gaining experience."
+        },
+        skills: [
+          { label: "Programming Languages", value: "JavaScript, C, C++, Python" },
+          { label: "Database Systems", value: "MongoDB" },
+          { label: "Web Technologies", value: "React.js, Next.js, Node.js, Express.js, Tailwind CSS" },
+          { label: "CI/CD", value: "Git/GitHub" },
+          { label: "Other Skills", value: "REST APIs" }
+        ],
+        projects: [
+          {
+            name: "TestProject",
+            stack: "React, Firebase, Express JS, MongoDB, JWT",
+            github: "https://github.com/sirecmg/",
+            live: "https://helloworld/",
+            bullets: "Users can create, join, and manage local social events (e.g., cleanups, plantations)\nEvents can be filtered/searched by type or title; only future events are shown\nJWT-secured private routes with user dashboards for managing and tracking participation"
+          },
+          {
+            name: "ROOMMATE FINDER",
+            stack: "React, Firebase, Express JS, MongoDB",
+            github: "https://github.com/eltonmurillo",
+            live: "https://helloworld/",
+            bullets: "Secure authentication with Firebase (Email/Password and Google) and protected/private routes\nFull-featured roommate listings: users can add, update, delete, and manage their own posts\nSmart Like System: Users have to like others' posts to reveal contact info of the owner"
+          }
+        ],
+        // Empty work experience remains hidden until the user adds content.
+        experience: [],
+        awards: [
+          { text: "Solved 800+ Problems in different Online Judges" },
+          { text: "One-Star coder at Codechef (Max Rating - 1309)" },
+          { text: "Codeforces (Max Rating - 921)" }
+        ],
+        // The linked competitive-programming profiles appear as a fourth bullet.
+        awardLinks: [
+          { label: "Codechef", url: "https://www.codechef.com/users/mdshakibsami" },
+          { label: "Codeforces", url: "https://codeforces.com/profile/mdshakibsami" },
+          { label: "StopStalk", url: "https://www.stopstalk.com/user/profile/mdshakibsami" },
+          { label: "LeetCode", url: "https://leetcode.com/u/7GZAnrv0L2/" }
+        ],
+        education: [
+          {
+            degree: "Bachelor of Science in Computer Science and Engineering",
+            school: "Jatiya Kabi Kazi Nazrul Islam University, Bangladesh",
+            dates: "2023 – Present"
+          }
+        ],
+        languages: "English (Professional Proficiency) | Spanish (Intermediate)",
+        layout: { fontSize: "10.8", spacing: "1", topMargin: "4" },
+        arrangement: {
+          sections: ["personal", "objective", "skills", "experience", "projects", "awards", "education", "languages"],
+          fields: {
+            personal: ["name", "title", "email", "phone", "location", "linkedin", "github"],
+            skills: ["label", "value"],
+            experience: ["role", "dates", "company", "bullets"],
+            projects: ["name", "stack", "github", "live", "bullets"],
+            awardLinks: ["label", "url"],
+            education: ["degree", "dates", "school"]
+          }
+        }
+      };
+
+      // Keep a deep independent copy so resetting cannot mutate DEFAULT_DATA.
+      function clone(object) {
+        return JSON.parse(JSON.stringify(object));
+      }
+
+      /* =================================================================
+         09. APPLICATION STATE AND SMALL SAFETY UTILITIES
+         All browser storage and user-generated text stays on this device.
+         ================================================================= */
+
+      // Validate the shape of imported/stored data, preserving sane defaults.
+      function normalizeData(value) {
+        const clean = clone(DEFAULT_DATA);
+        if (!value || typeof value !== "object" || Array.isArray(value)) return clean;
+
+        // Copy only known, string-valued fields into the personal section.
+        if (value.personal && typeof value.personal === "object") {
+          for (const key of Object.keys(clean.personal)) {
+            if (typeof value.personal[key] === "string") clean.personal[key] = value.personal[key];
+          }
+          if (typeof value.personal.objective !== "string" && typeof value.personal.summary === "string" && value.personal.summary.trim()) {
+            clean.personal.objective = value.personal.summary;
+          }
+        }
+
+        // Arrays must be arrays of plain objects; never trust JSON types blindly.
+        const listFields = {
+          skills: ["label", "value"],
+          projects: ["name", "stack", "github", "live", "bullets"],
+          experience: ["role", "company", "dates", "bullets"],
+          awards: ["text"],
+          awardLinks: ["label", "url"],
+          education: ["degree", "school", "dates"]
+        };
+        for (const [listName, keys] of Object.entries(listFields)) {
+          if (!Array.isArray(value[listName])) continue;
+          clean[listName] = value[listName].slice(0, 100).map(entry => {
+            const safeEntry = {};
+            for (const key of keys) {
+              safeEntry[key] = entry && typeof entry[key] === "string" ? entry[key] : "";
+            }
+            return safeEntry;
+          });
+        }
+
+        // Languages are a single editable line in the reference layout.
+        if (typeof value.languages === "string") clean.languages = value.languages;
+
+        // Only allow known values for settings that are used in CSS variables.
+        const settings = value.layout || {};
+        if (["10", "10.5", "10.8", "11", "11.3"].includes(settings.fontSize)) {
+          clean.layout.fontSize = settings.fontSize;
+        }
+        if (["0.8", "1", "1.15"].includes(settings.spacing)) {
+          clean.layout.spacing = settings.spacing;
+        }
+        if (["4", "6", "8"].includes(settings.topMargin)) {
+          clean.layout.topMargin = settings.topMargin;
+        }
+
+        const arrangement = value.arrangement || {};
+        const mergeOrder = (candidate, defaults) => {
+          const valid = Array.isArray(candidate)
+            ? candidate.filter((key, index) => defaults.includes(key) && candidate.indexOf(key) === index)
+            : [];
+          return [...valid, ...defaults.filter(key => !valid.includes(key))];
+        };
+        clean.arrangement.sections = mergeOrder(arrangement.sections, clean.arrangement.sections);
+        const savedFields = arrangement.fields || {};
+        for (const [group, defaults] of Object.entries(clean.arrangement.fields)) {
+          clean.arrangement.fields[group] = mergeOrder(savedFields[group], defaults);
+          if (!Array.isArray(clean[group])) continue;
+          clean[group].forEach((entry, index) => {
+            const savedEntry = Array.isArray(value[group]) ? value[group][index] : null;
+            entry._fieldOrder = mergeOrder(savedEntry && savedEntry._fieldOrder, defaults);
+          });
+        }
+        return clean;
+      }
+
+      // If localStorage is unavailable, the editor still works for the session.
+      function readStoredData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? normalizeData(JSON.parse(raw)) : clone(DEFAULT_DATA);
+        } catch (error) {
+          return clone(DEFAULT_DATA);
+        }
+      }
+
+      // State is one plain JavaScript object; nothing external is needed.
+      let data = readStoredData();
+      let activeTab = "personal";
+      let toastTimer;
+
+      // Cached nodes keep rendering functions short and understandable.
+      const editorFields = document.getElementById("editorFields");
+      const editorScroller = document.getElementById("editorScroller");
+      const resumeDocument = document.getElementById("resumeDocument");
+      const a4Sheet = document.getElementById("a4Sheet");
+      const pageSizeHolder = document.getElementById("pageSizeHolder");
+      const previewScroll = document.getElementById("previewScroll");
+      const fitStatus = document.getElementById("fitStatus");
+
+      // HTML-escape form values; template strings are never allowed to run HTML.
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[character]);
+      }
+
+      // A URL must use http(s) to be a clickable, safe external link.
+      function safeWebUrl(value) {
+        try {
+          const parsed = new URL(String(value).trim());
+          return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.href : "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      // Autosave takes place after every change; the app is still fully offline.
+      function saveData() {
+        const label = document.getElementById("saveStatus");
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          label.textContent = "Saved on this device";
+        } catch (error) {
+          label.textContent = "Browser storage unavailable";
+        }
+      }
+
+      // A small temporary on-screen confirmation; it never appears in print.
+      function showToast(message) {
+        const node = document.getElementById("toast");
+        node.textContent = message;
+        node.classList.add("visible");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => node.classList.remove("visible"), 2700);
+      }
+
+      /* =================================================================
+         10. REUSABLE EDITOR FIELD BUILDERS
+         Fields, repeated entries, and output sections expose native drag
+         handles. Their saved order is reused when building the resume.
+         ================================================================= */
+
+      function dragHandle(label) {
+        return `<span class="drag-handle" draggable="true" role="button" tabindex="0" aria-label="Drag ${escapeHTML(label)}">⋮⋮</span>`;
+      }
+
+      function reorderAttributes(kind, group, id, collection = "") {
+        return `data-reorder-kind="${escapeHTML(kind)}" data-reorder-group="${escapeHTML(group)}" data-reorder-id="${escapeHTML(id)}" data-reorder-collection="${escapeHTML(collection)}"`;
+      }
+
+      function field(label, section, key, value, options = {}) {
+        const attrs = `data-section="${escapeHTML(section)}" data-field="${escapeHTML(key)}"`;
+        const placeholder = escapeHTML(options.placeholder || "");
+        const input = options.multiline
+          ? `<textarea ${attrs} rows="${options.rows || 3}" placeholder="${placeholder}">${escapeHTML(value)}</textarea>`
+          : `<input ${attrs} type="text" value="${escapeHTML(value)}" placeholder="${placeholder}">`;
+        const hint = options.hint ? `<span class="field-hint">${escapeHTML(options.hint)}</span>` : "";
+        const contents = `<label><span class="field-label">${escapeHTML(label)}</span>${input}${hint}</label>`;
+        if (options.reorder === false) return `<div class="field">${contents}</div>`;
+        const collection = options.orderGroup || section;
+        const id = options.orderId || key;
+        const group = options.dragGroup || `fields:${collection}`;
+        return `<div class="field reorderable-field reorderable-item" ${reorderAttributes("field", group, id, collection)}>
+          ${dragHandle(label)}${contents}
+        </div>`;
+      }
+
+      function listField(label, listName, index, key, value, options = {}) {
+        const attrs = `data-list="${escapeHTML(listName)}" data-index="${index}" data-field="${escapeHTML(key)}"`;
+        const placeholder = escapeHTML(options.placeholder || "");
+        const input = options.multiline
+          ? `<textarea ${attrs} rows="${options.rows || 3}" placeholder="${placeholder}">${escapeHTML(value)}</textarea>`
+          : `<input ${attrs} type="text" value="${escapeHTML(value)}" placeholder="${placeholder}">`;
+        const hint = options.hint ? `<span class="field-hint">${escapeHTML(options.hint)}</span>` : "";
+        const contents = `<label><span class="field-label">${escapeHTML(label)}</span>${input}${hint}</label>`;
+        if (options.reorder === false) return `<div class="field">${contents}</div>`;
+        return `<div class="field reorderable-field reorderable-item" ${reorderAttributes("field", `fields:${listName}:${index}`, key, listName)}>
+          ${dragHandle(label)}${contents}
+        </div>`;
+      }
+
+      function groupedFields(label, collection, id, body) {
+        return `<section class="entry-card reorderable-item" ${reorderAttributes("field", `fields:${collection}`, id, collection)}>
+          <div class="entry-heading"><div class="entry-heading-main">${dragHandle(label)}<strong>${escapeHTML(label)}</strong></div></div>
+          ${body}
+        </section>`;
+      }
+
+      function editorHeading(title, description) {
+        return `<div class="editor-heading"><h3>${escapeHTML(title)}</h3><p>${escapeHTML(description)}</p></div>`;
+      }
+
+      function entryCard(listName, index, title, body) {
+        return `<section class="entry-card reorderable-item" ${reorderAttributes("entry", `entries:${listName}`, index, listName)}>
+          <div class="entry-heading"><div class="entry-heading-main">${dragHandle(title)}<strong>${escapeHTML(title)}</strong></div>
+          <button type="button" class="button small danger" data-remove="${escapeHTML(listName)}" data-index="${index}" aria-label="Remove ${escapeHTML(title)}">Remove</button></div>
+          ${body}
+        </section>`;
+      }
+
+      function addButton(listName, label) {
+        return `<button type="button" class="add-button" data-add="${escapeHTML(listName)}">+ ${escapeHTML(label)}</button>`;
+      }
+
+      function orderedFields(group, entry = null) {
+        if (entry && Array.isArray(entry._fieldOrder)) return entry._fieldOrder;
+        return data.arrangement.fields[group] || [];
+      }
+
+      function renderOrderedFields(group, renderers, entry = null) {
+        return orderedFields(group, entry).filter(key => renderers[key]).map(key => renderers[key]()).join("");
+      }
+
+      /* =================================================================
+         11. EDITABLE CONTENT, ARRANGEMENT, AND LAYOUT TABS
+         ================================================================= */
+
+      function personalTab() {
+        const p = data.personal;
+        const renderers = {
+          name: () => field("Full name", "personal", "name", p.name, { placeholder: "Your full name", orderGroup: "personal" }),
+          title: () => field("Professional title", "personal", "title", p.title, { placeholder: "e.g. Frontend Web Developer", orderGroup: "personal" }),
+          email: () => field("Email address", "personal", "email", p.email, { orderGroup: "personal" }),
+          phone: () => field("Phone number", "personal", "phone", p.phone, { orderGroup: "personal" }),
+          location: () => field("Location", "personal", "location", p.location, { orderGroup: "personal" }),
+          linkedin: () => groupedFields("LinkedIn link", "personal", "linkedin", `<div class="field-grid">
+            ${field("Link label", "personal", "linkedinLabel", p.linkedinLabel, { reorder: false })}
+            ${field("Link URL", "personal", "linkedinUrl", p.linkedinUrl, { reorder: false })}
+          </div>`),
+          github: () => groupedFields("GitHub link", "personal", "github", `<div class="field-grid">
+            ${field("Link label", "personal", "githubLabel", p.githubLabel, { reorder: false })}
+            ${field("Link URL", "personal", "githubUrl", p.githubUrl, { reorder: false })}
+          </div>`)
+        };
+        return editorHeading("Personal details", "Drag the handles to change the order used in the resume header.") +
+          `<p class="drag-help">Contact fields can be rearranged independently. A link label and its URL move together because they form one output link.</p>` +
+          renderOrderedFields("personal", renderers) +
+          `<h4 class="subheading">Objective</h4>` +
+          field("Objective text", "personal", "objective", p.objective, {
+            multiline: true, rows: 4, reorder: false,
+            hint: "Move the complete Objective section from the Arrange tab."
+          });
+      }
+
+      function skillsTab() {
+        let html = editorHeading("Technical skills", "Drag cards to reorder skill rows; drag fields inside a card to change their output order.");
+        data.skills.forEach((skill, index) => {
+          const renderers = {
+            label: () => listField("Category label", "skills", index, "label", skill.label),
+            value: () => listField("Skills", "skills", index, "value", skill.value)
+          };
+          html += entryCard("skills", index, `Skill category ${index + 1}`, renderOrderedFields("skills", renderers, skill));
+        });
+        return html + addButton("skills", "Add skill category");
+      }
+
+      function experienceTab() {
+        let html = editorHeading("Work experience", "Drag roles and their individual fields into the order you want printed.");
+        data.experience.forEach((job, index) => {
+          const renderers = {
+            role: () => listField("Role / position", "experience", index, "role", job.role),
+            company: () => listField("Company", "experience", index, "company", job.company),
+            dates: () => listField("Dates", "experience", index, "dates", job.dates),
+            bullets: () => listField("Achievements (one per line)", "experience", index, "bullets", job.bullets, {
+              multiline: true, rows: 4, hint: "Press Enter to begin a new achievement."
+            })
+          };
+          html += entryCard("experience", index, `Role ${index + 1}`, renderOrderedFields("experience", renderers, job));
+        });
+        return html + addButton("experience", "Add work experience");
+      }
+
+      function projectsTab() {
+        let html = editorHeading("Projects", "Drag projects and their individual fields into the order you want printed.");
+        data.projects.forEach((project, index) => {
+          const renderers = {
+            name: () => listField("Project name", "projects", index, "name", project.name),
+            stack: () => listField("Technology stack", "projects", index, "stack", project.stack),
+            github: () => listField("GitHub URL", "projects", index, "github", project.github),
+            live: () => listField("Live demo URL", "projects", index, "live", project.live),
+            bullets: () => listField("Bullet points", "projects", index, "bullets", project.bullets, {
+              multiline: true, rows: 5, hint: "Press Enter to begin a new bullet."
+            })
+          };
+          html += entryCard("projects", index, `Project ${index + 1}`, renderOrderedFields("projects", renderers, project));
+        });
+        return html + addButton("projects", "Add project");
+      }
+
+      function extrasTab() {
+        let html = editorHeading("More sections", "Drag entries within awards, profile links, and education to reorder their output.");
+        html += `<h4 class="subheading">Awards and achievements</h4>`;
+        data.awards.forEach((award, index) => {
+          html += entryCard("awards", index, `Achievement ${index + 1}`,
+            listField("Description", "awards", index, "text", award.text));
+        });
+        html += addButton("awards", "Add achievement");
+
+        html += `<h4 class="subheading">Profile links in awards</h4>`;
+        data.awardLinks.forEach((link, index) => {
+          html += entryCard("awardLinks", index, `Link ${index + 1}`, `<div class="field-grid">
+            ${listField("Link label", "awardLinks", index, "label", link.label, { reorder: false })}
+            ${listField("Link URL", "awardLinks", index, "url", link.url, { reorder: false })}
+          </div>`);
+        });
+        html += addButton("awardLinks", "Add profile link");
+
+        html += `<h4 class="subheading">Education</h4>`;
+        data.education.forEach((school, index) => {
+          const renderers = {
+            degree: () => listField("Degree / qualification", "education", index, "degree", school.degree),
+            school: () => listField("School / university", "education", index, "school", school.school),
+            dates: () => listField("Dates", "education", index, "dates", school.dates)
+          };
+          html += entryCard("education", index, `Education ${index + 1}`, renderOrderedFields("education", renderers, school));
+        });
+        html += addButton("education", "Add education");
+        html += `<h4 class="subheading">Languages</h4>` +
+          field("Languages and proficiency", "root", "languages", data.languages, {
+            reorder: false, hint: "Move the complete Language section from the Arrange tab."
+          });
+        return html;
+      }
+
+      function arrangeTab() {
+        const labels = {
+          personal: "Personal header", objective: "Objective", skills: "Technical Skills",
+          experience: "Work Experience", projects: "Projects", awards: "Awards and Achievements",
+          education: "Education", languages: "Language"
+        };
+        const items = data.arrangement.sections.map(section =>
+          `<div class="arrange-item reorderable-item" ${reorderAttributes("section", "sections", section, "sections")}>
+            <span>${escapeHTML(labels[section])}</span>${dragHandle(labels[section])}
+          </div>`).join("");
+        return editorHeading("Arrange resume", "Drag complete sections into any order. Changes appear in the A4 preview immediately.") +
+          `<p class="drag-help">Use the other tabs to drag individual fields and entries. Linked labels and URLs move as one logical output item.</p>` +
+          `<div class="arrange-list">${items}</div>`;
+      }
+
+      function layoutTab() {
+        const current = data.layout;
+        const selected = (actual, wanted) => actual === wanted ? " selected" : "";
+        return editorHeading("A4 page layout", "The reference style is intentionally simple: black serif text, thin lines, blue links.") +
+          `<label class="field"><span class="field-label">Resume font size</span>
+            <select data-section="layout" data-field="fontSize">
+              <option value="10"${selected(current.fontSize, "10")}>10 pt — Small</option>
+              <option value="10.5"${selected(current.fontSize, "10.5")}>10.5 pt</option>
+              <option value="10.8"${selected(current.fontSize, "10.8")}>10.8 pt — Reference</option>
+              <option value="11"${selected(current.fontSize, "11")}>11 pt</option>
+              <option value="11.3"${selected(current.fontSize, "11.3")}>11.3 pt — Large</option>
+            </select></label>` +
+          `<label class="field"><span class="field-label">Vertical spacing</span>
+            <select data-section="layout" data-field="spacing">
+              <option value="0.8"${selected(current.spacing, "0.8")}>Compact — fit more content</option>
+              <option value="1"${selected(current.spacing, "1")}>Reference spacing</option>
+              <option value="1.15"${selected(current.spacing, "1.15")}>Relaxed spacing</option>
+            </select></label>` +
+          `<label class="field"><span class="field-label">Top page margin</span>
+            <select data-section="layout" data-field="topMargin">
+              <option value="4"${selected(current.topMargin, "4")}>4 mm — Reference</option>
+              <option value="6"${selected(current.topMargin, "6")}>6 mm</option>
+              <option value="8"${selected(current.topMargin, "8")}>8 mm</option>
+            </select></label>` +
+          `<div class="notice"><strong>Automatic one-page fit:</strong> Your resume is scaled to fit one A4 sheet when you print or save as PDF. Very long resumes may become too small to read; the indicator below the preview warns you when this happens.<br><br>
+          <strong>Printing checklist:</strong> Choose A4 paper, 100% scale, no margins, and no browser headers/footers. Browser or printer settings can override the layout.<br><br>
+          <strong>Privacy:</strong> This file has no external scripts, libraries, fonts, or requests. Your changes remain in your own browser storage until you export them.</div>`;
+      }
+
+      function renderEditor() {
+        const renderers = {
+          personal: personalTab,
+          skills: skillsTab,
+          experience: experienceTab,
+          projects: projectsTab,
+          extras: extrasTab,
+          arrange: arrangeTab,
+          layout: layoutTab
+        };
+        editorFields.innerHTML = renderers[activeTab]();
+        document.querySelectorAll("[data-tab]").forEach(button => {
+          const active = button.dataset.tab === activeTab;
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-selected", String(active));
+        });
+      }
+
+      /* =================================================================
+         12. SAFE RESUME DOM BUILDERS
+         Resume text is inserted with textContent, not innerHTML.
+         This prevents input values from being interpreted as HTML code.
+         ================================================================= */
+
+      // A minimal DOM helper that creates an element and sets optional text.
+      function element(tag, className = "", text = null) {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== null) node.textContent = text;
+        return node;
+      }
+
+      // Insert pipes between inline items without leaving a trailing separator.
+      function appendWithSeparators(container, items) {
+        items.forEach((item, index) => {
+          if (index > 0) container.appendChild(element("span", "cv-separator", "|"));
+          container.appendChild(item);
+        });
+      }
+
+      // Create either a safe clickable link or a plain label if URL is missing.
+      function externalLink(label, rawURL) {
+        const url = safeWebUrl(rawURL);
+        if (!url) return element("span", "", label);
+        const anchor = element("a", "", label);
+        anchor.href = url;
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
+        return anchor;
+      }
+
+      // Split a textarea into bullets; ignore empty lines or pasted bullet marks.
+      function bulletLines(multiline) {
+        return String(multiline || "").split(/\r?\n/)
+          .map(line => line.replace(/^\s*(?:[•●*-]\s*)?/, "").trim())
+          .filter(Boolean);
+      }
+
+      // Create a ruled, uppercase heading and a container for section content.
+      function createSection(title) {
+        const suffix = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+        const section = element("section", `cv-section cv-section--${suffix}`);
+        section.appendChild(element("h2", "cv-section-title", title));
+        resumeDocument.appendChild(section);
+        return section;
+      }
+
+      // Helper to generate an ordinary ul from all lines of a textarea.
+      function appendBulletList(parent, text) {
+        const lines = bulletLines(text);
+        if (!lines.length) return;
+        const list = element("ul");
+        lines.forEach(line => list.appendChild(element("li", "", line)));
+        parent.appendChild(list);
+      }
+
+      /* =================================================================
+         13. BUILD THE RESUME IN THE USER'S SAVED ARRANGEMENT
+         ================================================================= */
+      function renderResume() {
+        resumeDocument.replaceChildren();
+
+        const settings = data.layout;
+        resumeDocument.style.setProperty("--cv-font-size", `${settings.fontSize}pt`);
+        resumeDocument.style.setProperty("--cv-spacing", settings.spacing);
+        a4Sheet.style.paddingTop = `${settings.topMargin}mm`;
+        const p = data.personal;
+
+        function renderPersonal() {
+          const order = orderedFields("personal");
+          const contactKeys = new Set(["email", "phone", "location"]);
+          const socialKeys = new Set(["linkedin", "github"]);
+          const head = element("header", "cv-head");
+          let index = 0;
+          while (index < order.length) {
+            const key = order[index];
+            if (key === "name" && p.name.trim()) head.appendChild(element("h1", "cv-name", p.name));
+            else if (key === "title" && p.title.trim()) head.appendChild(element("p", "cv-job-title", p.title));
+            else if (contactKeys.has(key)) {
+              const items = [];
+              while (index < order.length && contactKeys.has(order[index])) {
+                const contact = order[index];
+                if (contact === "email" && p.email.trim()) {
+                  const mail = element("a", "", p.email);
+                  mail.href = `mailto:${encodeURIComponent(p.email.trim())}`;
+                  items.push(mail);
+                } else if (contact === "phone" && p.phone.trim()) items.push(element("span", "", p.phone));
+                else if (contact === "location" && p.location.trim()) items.push(element("span", "", p.location));
+                index += 1;
+              }
+              if (items.length) {
+                const line = element("p", "cv-contact");
+                appendWithSeparators(line, items);
+                head.appendChild(line);
+              }
+              continue;
+            } else if (socialKeys.has(key)) {
+              const items = [];
+              while (index < order.length && socialKeys.has(order[index])) {
+                const social = order[index];
+                if (social === "linkedin" && p.linkedinLabel.trim()) items.push(externalLink(p.linkedinLabel, p.linkedinUrl));
+                else if (social === "github" && p.githubLabel.trim()) items.push(externalLink(p.githubLabel, p.githubUrl));
+                index += 1;
+              }
+              if (items.length) {
+                const line = element("p", "cv-social");
+                appendWithSeparators(line, items);
+                head.appendChild(line);
+              }
+              continue;
+            }
+            index += 1;
+          }
+          if (head.childNodes.length) resumeDocument.appendChild(head);
+        }
+
+        function renderObjective() {
+          if (!p.objective.trim()) return;
+          const section = createSection("Objective");
+          section.appendChild(element("p", "cv-objective", p.objective));
+        }
+
+        function renderSkills() {
+          const visible = data.skills.filter(skill => skill.label.trim() || skill.value.trim());
+          if (!visible.length) return;
+          const section = createSection("Technical Skills");
+          const list = element("div", "cv-skill-list");
+          visible.forEach(skill => {
+            const row = element("div", "cv-skill");
+            orderedFields("skills", skill).forEach(key => {
+              if (key === "label" && skill.label.trim()) {
+                if (row.childNodes.length) row.appendChild(document.createTextNode(" "));
+                row.appendChild(element("strong", "", `${skill.label.replace(/:\s*$/, "")}:`));
+              }
+              if (key === "value" && skill.value.trim()) {
+                if (row.childNodes.length) row.appendChild(document.createTextNode(" "));
+                row.appendChild(document.createTextNode(skill.value));
+              }
+            });
+            list.appendChild(row);
+          });
+          section.appendChild(list);
+        }
+
+        function renderExperience() {
+          const visible = data.experience.filter(job => job.role.trim() || job.company.trim() || job.dates.trim() || bulletLines(job.bullets).length);
+          if (!visible.length) return;
+          const section = createSection("Work Experience");
+          visible.forEach(job => {
+            const block = element("div", "cv-experience");
+            const order = orderedFields("experience", job);
+            let index = 0;
+            while (index < order.length) {
+              const key = order[index];
+              if (key === "role" || key === "dates") {
+                const top = element("div", "cv-experience-top");
+                while (index < order.length && (order[index] === "role" || order[index] === "dates")) {
+                  const topKey = order[index];
+                  if (topKey === "role" && job.role.trim()) top.appendChild(element("strong", "", job.role));
+                  if (topKey === "dates" && job.dates.trim()) top.appendChild(element("span", "cv-dates", job.dates));
+                  index += 1;
+                }
+                if (top.childNodes.length) block.appendChild(top);
+                continue;
+              }
+              if (key === "company" && job.company.trim()) block.appendChild(element("div", "cv-experience-company", job.company));
+              if (key === "bullets") appendBulletList(block, job.bullets);
+              index += 1;
+            }
+            section.appendChild(block);
+          });
+        }
+
+        function renderProjects() {
+          const visible = data.projects.filter(project => project.name.trim() || project.stack.trim() || project.github.trim() || project.live.trim() || bulletLines(project.bullets).length);
+          if (!visible.length) return;
+          const section = createSection("Projects");
+          const topKeys = new Set(["name", "stack", "github", "live"]);
+          visible.forEach(project => {
+            const block = element("div", "cv-project");
+            const order = orderedFields("projects", project);
+            let index = 0;
+            while (index < order.length) {
+              const key = order[index];
+              if (topKeys.has(key)) {
+                const top = element("div", "cv-project-top");
+                let currentDetails = null;
+                let currentLinks = null;
+                while (index < order.length && topKeys.has(order[index])) {
+                  const topKey = order[index];
+                  if (topKey === "name" || topKey === "stack") {
+                    currentLinks = null;
+                    if (!currentDetails) {
+                      currentDetails = element("div", "cv-project-details");
+                      top.appendChild(currentDetails);
+                    }
+                    const value = project[topKey].trim();
+                    if (value) {
+                      if (currentDetails.childNodes.length) currentDetails.appendChild(document.createTextNode(" | "));
+                      currentDetails.appendChild(element("span", topKey === "name" ? "cv-project-name" : "", project[topKey]));
+                    }
+                  } else {
+                    currentDetails = null;
+                    if (!currentLinks) {
+                      currentLinks = element("div", "cv-project-links");
+                      top.appendChild(currentLinks);
+                    }
+                    const url = project[topKey].trim();
+                    if (url) {
+                      if (currentLinks.childNodes.length) currentLinks.appendChild(element("span", "cv-separator", "|"));
+                      currentLinks.appendChild(externalLink(topKey === "github" ? "GitHub" : "Live", url));
+                    }
+                  }
+                  index += 1;
+                }
+                Array.from(top.children).forEach(child => {
+                  if (!child.childNodes.length) child.remove();
+                });
+                if (top.childNodes.length) block.appendChild(top);
+                continue;
+              }
+              if (key === "bullets") appendBulletList(block, project.bullets);
+              index += 1;
+            }
+            section.appendChild(block);
+          });
+        }
+
+        function renderAwards() {
+          const visibleAwards = data.awards.filter(award => award.text.trim());
+          const visibleLinks = data.awardLinks.filter(link => link.label.trim());
+          if (!visibleAwards.length && !visibleLinks.length) return;
+          const section = createSection("Awards and Achievements");
+          const list = element("ul", "cv-awards");
+          visibleAwards.forEach(award => list.appendChild(element("li", "", award.text)));
+          if (visibleLinks.length) {
+            const item = element("li");
+            const links = visibleLinks.map(link => externalLink(link.label, link.url));
+            appendWithSeparators(item, links);
+            list.appendChild(item);
+          }
+          section.appendChild(list);
+        }
+
+        function renderEducation() {
+          const visible = data.education.filter(school => school.degree.trim() || school.school.trim() || school.dates.trim());
+          if (!visible.length) return;
+          const section = createSection("Education");
+          visible.forEach(school => {
+            const block = element("div", "cv-education");
+            const order = orderedFields("education", school);
+            let index = 0;
+            while (index < order.length) {
+              const key = order[index];
+              if (key === "degree" || key === "dates") {
+                const top = element("div", "cv-education-top");
+                while (index < order.length && (order[index] === "degree" || order[index] === "dates")) {
+                  const topKey = order[index];
+                  if (topKey === "degree" && school.degree.trim()) top.appendChild(element("span", "cv-education-degree", school.degree));
+                  if (topKey === "dates" && school.dates.trim()) top.appendChild(element("span", "cv-dates", school.dates));
+                  index += 1;
+                }
+                if (top.childNodes.length) block.appendChild(top);
+                continue;
+              }
+              if (key === "school" && school.school.trim()) block.appendChild(element("div", "cv-education-school", school.school));
+              index += 1;
+            }
+            section.appendChild(block);
+          });
+        }
+
+        function renderLanguages() {
+          if (!data.languages.trim()) return;
+          const section = createSection("Language");
+          section.appendChild(element("div", "cv-languages", data.languages));
+        }
+
+        const sectionRenderers = {
+          personal: renderPersonal,
+          objective: renderObjective,
+          skills: renderSkills,
+          experience: renderExperience,
+          projects: renderProjects,
+          awards: renderAwards,
+          education: renderEducation,
+          languages: renderLanguages
+        };
+        data.arrangement.sections.forEach(section => sectionRenderers[section]());
+
+        const filenameBase = p.name.trim().replace(/[^\p{L}\p{N} _-]/gu, "") || "Resume";
+        document.title = `${filenameBase} - Resume`;
+        requestAnimationFrame(() => {
+          fitResumeToA4();
+          scalePreview();
+        });
+      }
+
+      /* =================================================================
+         14. AUTOMATIC SINGLE-PAGE FIT + RESPONSIVE PREVIEW
+         A4 has a fixed 210x297mm canvas. We binary-search the largest
+         content scale that will fit inside its printable inner rectangle.
+         The content scaling stays active IN PRINT; the separate preview
+         scale on .a4-sheet is disabled for printing.
+
+         NOTE: A huge amount of content can always be made physically small
+         enough to fit, but it will eventually become hard to read. Users
+         get a warning below the preview when the scale drops below 85%.
+         ================================================================= */
+      function fitResumeToA4() {
+        // Reset before measuring: otherwise earlier edits can leave the
+        // resume artificially small even when content has been deleted.
+        resumeDocument.style.setProperty("--resume-fit", "1");
+
+        // Padding is excluded because the resume sits inside the sheet.
+        // A ~3px safety reserve protects against rounding in print engines.
+        const sheetStyles = getComputedStyle(a4Sheet);
+        const innerHeight = a4Sheet.clientHeight
+          - parseFloat(sheetStyles.paddingTop)
+          - parseFloat(sheetStyles.paddingBottom) - 3;
+        // Width is already guaranteed by width: calc(100% / fit), which
+        // exactly fills the available A4 width after the transform.
+        // Testing scrollWidth against that same width can produce false
+        // overflow from fractional-pixel rounding, so test height only.
+        // A transform does not change scrollHeight, hence the multiplier.
+        function fits(candidate) {
+          resumeDocument.style.setProperty("--resume-fit", String(candidate));
+          const height = resumeDocument.scrollHeight * candidate;
+          return height <= innerHeight;
+        }
+
+        let fitted = 1;
+        if (!fits(1)) {
+          // Start with the largest possible scaling and home in on the
+          // best fit. 22 iterations give sub-pixel accuracy on A4 sheets.
+          let low = 0.0001;
+          let high = 1;
+          for (let i = 0; i < 22; i += 1) {
+            const mid = (low + high) / 2;
+            if (fits(mid)) low = mid;
+            else high = mid;
+          }
+          // Extra safety buffer for small browser/layout differences.
+          fitted = low * 0.997;
+        }
+        resumeDocument.style.setProperty("--resume-fit", String(fitted));
+
+        // Give a useful, honest warning rather than silently printing tiny
+        // text. We still keep EVERYTHING and never discard resume entries.
+        const percentage = Math.round(fitted * 100);
+        if (fitted < 0.85) {
+          fitStatus.textContent = `One A4 page (${percentage}% size) — very small text; shorten content for readability.`;
+          fitStatus.classList.add("warning");
+        } else if (fitted < 0.999) {
+          fitStatus.textContent = `Fits one A4 page automatically (${percentage}% size).`;
+          fitStatus.classList.remove("warning");
+        } else {
+          fitStatus.textContent = "Fits one A4 page at full size.";
+          fitStatus.classList.remove("warning");
+        }
+        return fitted;
+      }
+
+      function scalePreview() {
+        // CSS millimeters convert to pixels via the browser's standard DPI.
+        const originalWidth = a4Sheet.offsetWidth;
+        const originalHeight = a4Sheet.offsetHeight;
+        if (!originalWidth) return;
+
+        // This ONLY scales the visual page to fit the right-hand preview pane.
+        const usableWidth = Math.max(200, previewScroll.clientWidth - 46);
+        const zoom = Math.min(1, usableWidth / originalWidth);
+        a4Sheet.style.transform = `scale(${zoom})`;
+
+        // A transformed element still occupies its unscaled flow rectangle,
+        // so the holder is sized to its VISIBLE page dimensions.
+        pageSizeHolder.style.width = `${Math.ceil(originalWidth * zoom)}px`;
+        pageSizeHolder.style.height = `${Math.ceil(originalHeight * zoom)}px`;
+      }
+
+      /* =================================================================
+         15. EDITOR EVENT HANDLING
+         Event delegation allows newly added list cards to work immediately.
+         ================================================================= */
+
+      // Update state when typing in any field, then repaint/save the resume.
+      function updateFromControl(control) {
+        const key = control.dataset.field;
+        if (!key) return;
+        if (control.dataset.list) {
+          const list = data[control.dataset.list];
+          const entry = list && list[Number(control.dataset.index)];
+          if (entry && Object.prototype.hasOwnProperty.call(entry, key)) entry[key] = control.value;
+        } else if (control.dataset.section === "root") {
+          if (key === "languages") data.languages = control.value;
+        } else if (data[control.dataset.section] && Object.prototype.hasOwnProperty.call(data[control.dataset.section], key)) {
+          data[control.dataset.section][key] = control.value;
+        }
+        saveData();
+        renderResume();
+      }
+
+      // Specify blank objects for the Add button in each repeatable section.
+      function blankItem(listName) {
+        const templates = {
+          skills: { label: "", value: "" },
+          projects: { name: "", stack: "", github: "", live: "", bullets: "" },
+          experience: { role: "", company: "", dates: "", bullets: "" },
+          awards: { text: "" },
+          awardLinks: { label: "", url: "" },
+          education: { degree: "", school: "", dates: "" }
+        };
+        return templates[listName] ? { ...templates[listName] } : null;
+      }
+
+      // Rerender the form after structural edits (adding/removing cards).
+      function refreshAfterListChange() {
+        renderEditor();
+        renderResume();
+        saveData();
+      }
+
+      // Input and change cover typing, pasting, select menus, and textareas.
+      editorFields.addEventListener("input", event => updateFromControl(event.target));
+      editorFields.addEventListener("change", event => updateFromControl(event.target));
+
+      let draggedItem = null;
+      let dropAfter = false;
+
+      function clearDragIndicators() {
+        editorFields.querySelectorAll(".dragging, .drop-before, .drop-after").forEach(node => {
+          node.classList.remove("dragging", "drop-before", "drop-after");
+        });
+      }
+
+      function matchingReorderTarget(start, source) {
+        let candidate = start.closest(".reorderable-item");
+        while (candidate) {
+          if (candidate.dataset.reorderKind === source.dataset.reorderKind &&
+              candidate.dataset.reorderGroup === source.dataset.reorderGroup) return candidate;
+          candidate = candidate.parentElement && candidate.parentElement.closest(".reorderable-item");
+        }
+        return null;
+      }
+
+      function moveArrayItem(items, sourceIndex, targetIndex, after) {
+        if (sourceIndex < 0 || targetIndex < 0 || sourceIndex >= items.length || targetIndex >= items.length || sourceIndex === targetIndex) return false;
+        const [item] = items.splice(sourceIndex, 1);
+        let insertionIndex = targetIndex + (after ? 1 : 0);
+        if (sourceIndex < insertionIndex) insertionIndex -= 1;
+        items.splice(insertionIndex, 0, item);
+        return true;
+      }
+
+      function applyReorder(source, target, after) {
+        const kind = source.dataset.reorderKind;
+        const collection = source.dataset.reorderCollection;
+        let changed = false;
+        if (kind === "section") {
+          const items = data.arrangement.sections;
+          changed = moveArrayItem(items, items.indexOf(source.dataset.reorderId), items.indexOf(target.dataset.reorderId), after);
+        } else if (kind === "entry") {
+          const items = data[collection];
+          const sourceIndex = Number(source.dataset.reorderId);
+          const targetIndex = Number(target.dataset.reorderId);
+          if (Array.isArray(items) && Number.isInteger(sourceIndex) && Number.isInteger(targetIndex)) {
+            changed = moveArrayItem(items, sourceIndex, targetIndex, after);
+          }
+        } else if (kind === "field") {
+          const groupParts = source.dataset.reorderGroup.split(":");
+          const entryIndex = groupParts.length === 3 ? Number(groupParts[2]) : null;
+          const entry = entryIndex !== null && Array.isArray(data[collection]) ? data[collection][entryIndex] : null;
+          if (entry && !Array.isArray(entry._fieldOrder)) entry._fieldOrder = [...data.arrangement.fields[collection]];
+          const items = entry ? entry._fieldOrder : data.arrangement.fields[collection];
+          if (Array.isArray(items)) {
+            changed = moveArrayItem(items, items.indexOf(source.dataset.reorderId), items.indexOf(target.dataset.reorderId), after);
+          }
+        }
+        if (!changed) return;
+        const scrollTop = editorScroller.scrollTop;
+        renderEditor();
+        renderResume();
+        saveData();
+        requestAnimationFrame(() => { editorScroller.scrollTop = scrollTop; });
+      }
+
+      editorFields.addEventListener("dragstart", event => {
+        const handle = event.target.closest(".drag-handle");
+        if (!handle) {
+          event.preventDefault();
+          return;
+        }
+        draggedItem = handle.closest(".reorderable-item");
+        if (!draggedItem) return;
+        draggedItem.classList.add("dragging");
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", draggedItem.dataset.reorderId || "move");
+      });
+
+      editorFields.addEventListener("dragover", event => {
+        if (!draggedItem) return;
+        const target = matchingReorderTarget(event.target, draggedItem);
+        if (!target || target === draggedItem) return;
+        event.preventDefault();
+        editorFields.querySelectorAll(".drop-before, .drop-after").forEach(node => node.classList.remove("drop-before", "drop-after"));
+        const bounds = target.getBoundingClientRect();
+        dropAfter = event.clientY >= bounds.top + bounds.height / 2;
+        target.classList.add(dropAfter ? "drop-after" : "drop-before");
+        event.dataTransfer.dropEffect = "move";
+      });
+
+      editorFields.addEventListener("drop", event => {
+        if (!draggedItem) return;
+        const source = draggedItem;
+        const target = matchingReorderTarget(event.target, source);
+        event.preventDefault();
+        clearDragIndicators();
+        draggedItem = null;
+        if (target && target !== source) applyReorder(source, target, dropAfter);
+      });
+
+      editorFields.addEventListener("dragend", () => {
+        clearDragIndicators();
+        draggedItem = null;
+      });
+
+      // Arrow keys on a focused handle provide the same reordering without a mouse.
+      editorFields.addEventListener("keydown", event => {
+        const handle = event.target.closest(".drag-handle");
+        if (!handle || !["ArrowUp", "ArrowDown"].includes(event.key)) return;
+        const source = handle.closest(".reorderable-item");
+        if (!source) return;
+        const candidates = Array.from(editorFields.querySelectorAll(".reorderable-item")).filter(item =>
+          item.dataset.reorderKind === source.dataset.reorderKind && item.dataset.reorderGroup === source.dataset.reorderGroup);
+        const index = candidates.indexOf(source);
+        const target = candidates[index + (event.key === "ArrowUp" ? -1 : 1)];
+        if (!target) return;
+        event.preventDefault();
+        applyReorder(source, target, event.key === "ArrowDown");
+      });
+
+      // Add/remove cards with a single delegated click handler.
+      editorFields.addEventListener("click", event => {
+        const add = event.target.closest("[data-add]");
+        const remove = event.target.closest("[data-remove]");
+        if (add) {
+          const listName = add.dataset.add;
+          const template = blankItem(listName);
+          if (!template || !Array.isArray(data[listName])) return;
+          data[listName].push(template);
+          refreshAfterListChange();
+          editorScroller.scrollTop = editorScroller.scrollHeight;
+        }
+        if (remove) {
+          const listName = remove.dataset.remove;
+          const index = Number(remove.dataset.index);
+          if (!Array.isArray(data[listName]) || !Number.isInteger(index)) return;
+          data[listName].splice(index, 1);
+          refreshAfterListChange();
+        }
+      });
+
+      // Tab switching changes only the form, not the content of the resume.
+      document.querySelectorAll("[data-tab]").forEach(button => {
+        button.addEventListener("click", () => {
+          activeTab = button.dataset.tab;
+          renderEditor();
+          editorScroller.scrollTop = 0;
+        });
+      });
+
+      /* =================================================================
+         16. BACKUP, RESTORE, RESET, AND PRINT BUTTONS
+         Only browser-native APIs are used (Blob, File, JSON, print).
+         ================================================================= */
+
+      // Download an editable JSON backup rather than a static screenshot.
+      document.getElementById("exportButton").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const objectURL = URL.createObjectURL(blob);
+        const temporaryLink = document.createElement("a");
+        temporaryLink.href = objectURL;
+        temporaryLink.download = "resume-data.json";
+        document.body.appendChild(temporaryLink);
+        temporaryLink.click();
+        temporaryLink.remove();
+        setTimeout(() => URL.revokeObjectURL(objectURL), 1000);
+        showToast("Resume backup downloaded.");
+      });
+
+      // Open the native file picker without needing any upload server.
+      const importInput = document.getElementById("importInput");
+      document.getElementById("importButton").addEventListener("click", () => importInput.click());
+
+      // Read imported .json files directly in the user's browser.
+      importInput.addEventListener("change", async () => {
+        const file = importInput.files && importInput.files[0];
+        if (!file) return;
+        try {
+          const parsed = JSON.parse(await file.text());
+          if (!parsed || typeof parsed !== "object" || !parsed.personal) {
+            throw new Error("Invalid resume file");
+          }
+          data = normalizeData(parsed);
+          renderEditor();
+          renderResume();
+          saveData();
+          showToast("Resume data imported successfully.");
+        } catch (error) {
+          showToast("Couldn't import that file. Choose an exported resume-data.json backup.");
+        }
+        importInput.value = "";
+      });
+
+      // Require confirmation before replacing all current edits with sample data.
+      document.getElementById("resetButton").addEventListener("click", () => {
+        if (!window.confirm("Replace all current resume content with the reference sample?")) return;
+        data = clone(DEFAULT_DATA);
+        activeTab = "personal";
+        renderEditor();
+        renderResume();
+        saveData();
+        showToast("Reference resume restored.");
+      });
+
+      // Fit synchronously immediately before showing the browser's printer.
+      // The print event also covers Ctrl+P / Cmd+P and the browser menu.
+      document.getElementById("printButton").addEventListener("click", () => {
+        fitResumeToA4();
+        window.print();
+      });
+      window.addEventListener("beforeprint", fitResumeToA4);
+      // Restore the correct on-screen preview after closing the print dialog.
+      window.addEventListener("afterprint", () => requestAnimationFrame(() => {
+        fitResumeToA4();
+        scalePreview();
+      }));
+
+      // Recalculate the preview scale when the application window changes size.
+      window.addEventListener("resize", () => requestAnimationFrame(scalePreview));
+
+      /* =================================================================
+         17. START THE APP
+         Both the form and the printable page are rendered on first load.
+         ================================================================= */
+      renderEditor();
+      renderResume();
+      saveData();
+    })();
+  </script>
+</body>
+</html>
