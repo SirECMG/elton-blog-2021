@@ -32,6 +32,42 @@ int main() {
 }
 ```
 
+## C++
+
+std::cin reads input until the first whitespace character is countered.
+```cpp
+#include <iostream>
+
+int main() {
+    std::string input;
+    std::cin >> input;
+    std::cout << input << "\n";
+  
+    while(std::cin >> input) {
+        std::cout << input << "\n";
+    }
+    return 0;
+}
+```
+
+get line from input
+```cpp
+#include <iostream>
+#include <string>
+
+int main() {
+    
+
+    std::string input;
+    while(std::getline(std::cin, line)) {
+        std::cout << line << "\n";
+    }
+
+
+    return 0;
+}
+```
+
 ## Erlang
 
 ```erlang
@@ -54,6 +90,21 @@ main() ->
 ```text
 erlc example.erl                                     
 erl -noshell -s example main -s init stop < input.txt
+```
+
+Using escript
+
+```bash
+rebar3 escriptize && ./_build/default/bin/main < input.txt
+```
+
+```erlang
+-module(main).
+-export([main/1]).
+
+main(_Args) ->
+    Line = io:get_line(""),
+    io:format("~s", [Line]).
 ```
 
 ## improvements to reading files. we will need to leverage <  (reading from stdin)
