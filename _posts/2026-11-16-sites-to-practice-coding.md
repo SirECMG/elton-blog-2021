@@ -6,33 +6,39 @@ date:   2026-11-16 11:44:00 +0800
 tags: [ competitive-programming ]
 ---
 
-# AtCoder
+# Sites to Practice
 
-[site](https://kenkoooo.com/atcoder/#/table/)
-
-# CodeForces
-[site](https://codeforces.com/problemset)
-
-# Leetcode
-[site](https://leetcode.com/problemset/)
-
-# OpenKattis
-[site](https://open.kattis.com/problems)
-
-# UVa
-
-[site](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8)
-
-# USA Computing Olympiad
-
-[site](https://usaco.org/index.php?page=resources)
-
-# Sphere Online Judge
-
-[site](https://www.spoj.com/problems/classical/)
+- [AtCoder](https://kenkoooo.com/atcoder/#/table/)
+- [Codeforces](https://codeforces.com/problemset)
+- [Leetcode](https://leetcode.com/problemset/)
+- [OpenKattis](https://open.kattis.com/problems)
+- [UVa](https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8)
+- [USA Computing Olympiad](https://usaco.org/index.php?page=resources)
+- [Sphere Online Judge](https://www.spoj.com/problems/classical/)
 
 
-# Practice Coding on Paper
+# When solving
+1. Practice Coding on Paper / or Blank Text Editor
+2. Majority of the time Think of Algorithm
+3. Try Practicing Implementing Quickly w/o needing to Debug (debugging takes 15-45 minute time)
 
-# Majority of the time Think of Algorithm
-# Try Practicing Implementing Quickly w/o needing to Debug (debugging takes 15-45 minute time)
+
+# Topics to Master
+
+- Basics
+  - Hashtable
+  - Trees
+  - Sorting
+  - Searching
+  - Recursion
+  - Dynamic Programming
+- Advanced
+  - Heaps / Priority Queue
+  - Greedy
+  - Bit Manipulation
+  - Union-Find
+
+
+
+Note: Stacks, Queues, Arrays, Graphs are implied in the topics above
+
