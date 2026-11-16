@@ -21,7 +21,7 @@
 title: SirECMG
 email: eltonmurillo@proton.me
 description: >- # this means to ignore newlines until "baseurl:"
-  Bay Area Raised, programmer, hodler, empowering at Microsoft.
+  Bay Area Raised, programmer, hodler, empowering.  ex-Microsoft.
   Nostr: npub173xr8cmcp9zk9q268t9fel97tlaqaf95a79qxkpl6rw9v65agz6qcg4k35
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
@@ -43,6 +43,10 @@ tag_page_dir: tag
 
 minima:
     skin: dark
+    nav_pages:
+        - tags.md
+        - posts.md
+        - about.markdown
 
 # Exclude from processing.
 # The following items will not be processed, by default.
